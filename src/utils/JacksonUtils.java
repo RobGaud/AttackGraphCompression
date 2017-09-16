@@ -13,7 +13,6 @@ import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.*;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import java.util.List;

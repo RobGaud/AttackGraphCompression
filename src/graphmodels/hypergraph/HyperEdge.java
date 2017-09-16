@@ -7,8 +7,7 @@ import graphmodels.graph.Edge;
  */
 public class HyperEdge extends Edge implements IHyperEdge {
 
-    private String fromNodeID, toNodeID, vulnNodeID;
-    private String data;
+    private String vulnNodeID;
 
     public HyperEdge(String fromNodeID, String toNodeID, String vulnNodeID, String data){
         super(fromNodeID, toNodeID, data);

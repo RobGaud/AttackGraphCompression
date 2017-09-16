@@ -3,6 +3,7 @@ package graphmodels.graph;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -12,8 +13,8 @@ public class HostNode implements IHostNode {
 
     private String id;                        // This ID could be the IP address of the node for simple ones
     private String data;
-    private Map<String, IEdge> inboundEdges;  // List of all the hyper-edges this node is the end-point of
-    private Map<String, IEdge> outboundEdges; // List of all the hyper-edges this node is the starting point of
+    private Map<String, Collection<IEdge>> inboundEdges;  // List of all the hyper-edges this node is the end-point of
+    private Map<String, Collection<IEdge>> outboundEdges; // List of all the hyper-edges this node is the starting point of
 
     public HostNode(String id, String data){
         this.id = id;
@@ -29,22 +30,58 @@ public class HostNode implements IHostNode {
     public String getData() { return this.data; }
 
     @Override
-    public void addInboundEdge(IEdge inEdge) { this.inboundEdges.put(inEdge.getFromNodeID(), inEdge); }
+    public void addInboundEdge(IEdge inEdge) {
+        // One cannot add an inbound edge to node N if the head of the edge is not N itself
+        if(!inEdge.getFromNodeID().equals(this.id))
+            return;
+
+        if(!this.inboundEdges.containsKey(inEdge.getFromNodeID())){
+            this.inboundEdges.put(inEdge.getFromNodeID(), new LinkedList<>());
+        }
+        this.inboundEdges.get(inEdge.getFromNodeID()).add(inEdge);
+    }
 
     @Override
-    public void removeInboundEdge(IEdge inEdge) { this.inboundEdges.remove(inEdge.getFromNodeID()); }
+    public void removeInboundEdge(IEdge inEdge) {
+        this.inboundEdges.get(inEdge.getFromNodeID()).remove(inEdge);
+    }
 
     @Override
-    public Collection<IEdge> getInboundEdges() { return this.inboundEdges.values(); }
+    public Collection<IEdge> getInboundEdges() {
+        Collection<Collection<IEdge>> edgeLists = this.outboundEdges.values();
+        Collection<IEdge> outboundEdges = new LinkedList<>();
+        for(Collection<IEdge> c : edgeLists){
+            outboundEdges.addAll(c);
+        }
+        return outboundEdges;
+    }
 
     @Override
-    public void addOutboundEdge(IEdge outEdge) { this.outboundEdges.put(outEdge.getToNodeID(), outEdge); }
+    public void addOutboundEdge(IEdge outEdge) {
+        // One cannot add an outbound edge to node N if the tail of the edge is not N itself
+        if(!outEdge.getFromNodeID().equals(this.id))
+            return;
+
+        if(!this.inboundEdges.containsKey(outEdge.getToNodeID())){
+            this.inboundEdges.put(outEdge.getToNodeID(), new LinkedList<>());
+        }
+        this.inboundEdges.get(outEdge.getToNodeID()).add(outEdge);
+    }
 
     @Override
-    public void removeOutboundEdge(IEdge outEdge) { this.outboundEdges.remove(outEdge.getToNodeID()); }
+    public void removeOutboundEdge(IEdge outEdge) {
+        this.outboundEdges.get(outEdge.getToNodeID()).remove(outEdge);
+    }
 
     @Override
-    public Collection<IEdge> getOutboundEdges() { return this.outboundEdges.values(); }
+    public Collection<IEdge> getOutboundEdges() {
+        Collection<Collection<IEdge>> edgeLists = this.inboundEdges.values();
+        Collection<IEdge> inboundEdges = new LinkedList<>();
+        for(Collection<IEdge> c : edgeLists){
+            inboundEdges.addAll(c);
+        }
+        return inboundEdges;
+    }
 
     public int hashCode(){ return this.id.hashCode(); }
 
