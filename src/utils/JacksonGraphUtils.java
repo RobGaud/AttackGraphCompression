@@ -15,7 +15,7 @@ import graphmodels.hypergraph.*;
 import java.io.File;
 import java.io.PrintWriter;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -35,8 +35,8 @@ public class JacksonGraphUtils {
 
         graphJson.put("attackGraph_Ident", graph.getData());
 
-        List<IHostNode> entryPoints = graph.getEntryPoints();
-        List<IHostNode> targets = graph.getTargets();
+        Collection<IHostNode> entryPoints = graph.getEntryPoints();
+        Collection<IHostNode> targets = graph.getTargets();
         Map<String, IHostNode> nodes = graph.getHostNodes();
         Map<String, IVulnNode> vulnerabilities = graph.getVulnNodes();
 

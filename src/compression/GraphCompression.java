@@ -23,7 +23,7 @@ import java.util.Map;
 public class GraphCompression implements IGraphCompression{
 
     private static final int MIN_SCC_SIZE = 4;
-    private static final String SCC_ID_PREFIX = "SCC_NODE_";
+    public static final String SCC_ID_PREFIX = "SCC_NODE_";
     private static int nextID = 0;
 
     private IGraph graphToCompress;
