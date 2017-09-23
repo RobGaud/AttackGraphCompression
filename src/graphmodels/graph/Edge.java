@@ -15,17 +15,17 @@ public class Edge implements IEdge {
     }
 
     @Override
-    public String getFromNodeID() { return this.fromNodeID; }
+    public String getTailID() { return this.fromNodeID; }
 
     @Override
-    public String getToNodeID() { return this.toNodeID; }
+    public String getHeadID() { return this.toNodeID; }
 
     @Override
     public String getData() { return this.data; }
 
     @Override
     public int hashCode(){
-        return this.fromNodeID.hashCode() + this.getToNodeID().hashCode();
+        return this.fromNodeID.hashCode() + this.getHeadID().hashCode();
     }
 
     @Override

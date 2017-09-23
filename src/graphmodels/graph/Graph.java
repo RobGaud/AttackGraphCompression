@@ -97,8 +97,8 @@ public class Graph implements IGraph {
 
     @Override
     public void addEdge(IEdge edge) {
-        String fromID = edge.getFromNodeID();
-        String toID = edge.getToNodeID();
+        String fromID = edge.getTailID();
+        String toID = edge.getHeadID();
 
         this.nodes.get(fromID).addOutboundEdge(edge);
         this.nodes.get(toID).addInboundEdge(edge);
@@ -106,8 +106,8 @@ public class Graph implements IGraph {
 
     @Override
     public void removeEdge(IEdge edge) {
-        String fromID = edge.getFromNodeID();
-        String toID = edge.getToNodeID();
+        String fromID = edge.getTailID();
+        String toID = edge.getHeadID();
 
         this.nodes.get(fromID).removeOutboundEdge(edge);
         this.nodes.get(toID).removeInboundEdge(edge);

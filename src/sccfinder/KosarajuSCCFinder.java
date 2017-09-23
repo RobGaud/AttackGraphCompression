@@ -27,8 +27,10 @@ public class KosarajuSCCFinder implements ISCCFinder {
         this.parentsMap = new HashMap<>();
     }
 
+    public IGraph getGraph(){ return this.graph; }
+
     @Override
-    public Map<String, List<IHostNode>> findSCCs(IHostNode startPoint) {
+    public Map<String, Collection<IHostNode>> findSCCs(IHostNode startPoint) {
         // TODO
         String spID = startPoint.getID();
 
@@ -43,7 +45,7 @@ public class KosarajuSCCFinder implements ISCCFinder {
         secondDfs();
 
         // Build lists of SCCs and return it.
-        Map<String, List<IHostNode>> sccMap = getSCCs();
+        Map<String, Collection<IHostNode>> sccMap = getSCCs();
         return sccMap;
     }
 
@@ -61,7 +63,7 @@ public class KosarajuSCCFinder implements ISCCFinder {
 
         // Iterate on out-neighbors
         for(IEdge outEdge : nodeToVisit.getOutboundEdges()){
-            String nextNodeID = outEdge.getToNodeID();
+            String nextNodeID = outEdge.getHeadID();
             this.graph.getNode(nextNodeID);
 
             // Again, we don't want to include entry points and target in the clustering process,
@@ -91,7 +93,7 @@ public class KosarajuSCCFinder implements ISCCFinder {
         this.parentsMap.put(nodeID, root);
         // Iterate on in-neighbors
         for(IEdge inEdge : graph.getHostNodes().get(nodeID).getInboundEdges()){
-            String inNeighborID = inEdge.getFromNodeID();
+            String inNeighborID = inEdge.getTailID();
 
             IHostNode inNeighbor = graph.getHostNodes().get(inNeighborID);
 
@@ -121,9 +123,9 @@ public class KosarajuSCCFinder implements ISCCFinder {
         return !alreadyInSCC && !isEntryPoint && !isTarget && !isSCCNode;
     }
 
-    private Map<String, List<IHostNode>> getSCCs(){
+    private Map<String, Collection<IHostNode>> getSCCs(){
 
-        Map<String, List<IHostNode>> sccMap = new HashMap<>();
+        Map<String, Collection<IHostNode>> sccMap = new HashMap<>();
         for(String nodeID : this.parentsMap.keySet()){
             String parentID = this.parentsMap.get(nodeID);
             IHostNode node = graph.getHostNodes().get(nodeID);

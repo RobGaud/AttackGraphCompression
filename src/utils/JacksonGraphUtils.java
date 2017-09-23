@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by Roberto Gaudenzi on 15/09/17.
  */
-public class JacksonUtils {
+public class JacksonGraphUtils {
 
     /**
      * This methods takes an HyperGraph and stores it into a Json file.
@@ -86,8 +86,8 @@ public class JacksonUtils {
             for(IEdge outEdge : node.getOutboundEdges()){
                 ObjectNode edgeJson = mapper.createObjectNode();
                 edgeJson.put("edge_Data", outEdge.getData());
-                edgeJson.put("tail", outEdge.getFromNodeID());
-                edgeJson.put("head", outEdge.getToNodeID());
+                edgeJson.put("tail", outEdge.getTailID());
+                edgeJson.put("head", outEdge.getHeadID());
 
                 IHyperEdge outHyperEdge = (HyperEdge)outEdge;
                 edgeJson.put("vulnerability", outHyperEdge.getVulnNodeID());

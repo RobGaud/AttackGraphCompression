@@ -1,8 +1,9 @@
 package sccfinder;
 
+import graphmodels.graph.IGraph;
 import graphmodels.graph.IHostNode;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -12,5 +13,6 @@ import java.util.Map;
  * in a given graph.IGraph instance.
  */
 public interface ISCCFinder {
-    Map<String, List<IHostNode>> findSCCs(IHostNode startPoint);
+    Map<String, Collection<IHostNode>> findSCCs(IHostNode startPoint);
+    IGraph getGraph();
 }

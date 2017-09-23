@@ -68,13 +68,18 @@ public class SCCNode extends HostNode implements ISCCNode{
     }
 
     @Override
+    public boolean hasInnerNode(String nodeID){
+        return this.innerNodes.keySet().contains(nodeID);
+    }
+
+    @Override
     public void addInnerEdge(IEdge edge) {
-        this.innerEdges.get(edge.getFromNodeID()).add(edge);
+        this.innerEdges.get(edge.getTailID()).add(edge);
     }
 
     @Override
     public void removeInnerEdge(IEdge edge) {
-        this.innerEdges.get(edge.getFromNodeID()).remove(edge);
+        this.innerEdges.get(edge.getTailID()).remove(edge);
     }
 
     @Override

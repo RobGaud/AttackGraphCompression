@@ -14,6 +14,7 @@ public interface ISCCNode extends IHostNode{
     void addInnerNode(IHostNode node);
     void removeInnerNode(IHostNode node);
     Map<String, IHostNode> getInnerNodes();
+    boolean hasInnerNode(String nodeID);
 
     void addInnerEdge(IEdge edge);
     void removeInnerEdge(IEdge edge);

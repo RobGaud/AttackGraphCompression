@@ -32,18 +32,18 @@ public class HostNode implements IHostNode {
     @Override
     public void addInboundEdge(IEdge inEdge) {
         // One cannot add an inbound edge to node N if the head of the edge is not N itself
-        if(!inEdge.getFromNodeID().equals(this.id))
+        if(!inEdge.getTailID().equals(this.id))
             return;
 
-        if(!this.inboundEdges.containsKey(inEdge.getFromNodeID())){
-            this.inboundEdges.put(inEdge.getFromNodeID(), new LinkedList<>());
+        if(!this.inboundEdges.containsKey(inEdge.getTailID())){
+            this.inboundEdges.put(inEdge.getTailID(), new LinkedList<>());
         }
-        this.inboundEdges.get(inEdge.getFromNodeID()).add(inEdge);
+        this.inboundEdges.get(inEdge.getTailID()).add(inEdge);
     }
 
     @Override
     public void removeInboundEdge(IEdge inEdge) {
-        this.inboundEdges.get(inEdge.getFromNodeID()).remove(inEdge);
+        this.inboundEdges.get(inEdge.getTailID()).remove(inEdge);
     }
 
     @Override
@@ -59,18 +59,18 @@ public class HostNode implements IHostNode {
     @Override
     public void addOutboundEdge(IEdge outEdge) {
         // One cannot add an outbound edge to node N if the tail of the edge is not N itself
-        if(!outEdge.getFromNodeID().equals(this.id))
+        if(!outEdge.getTailID().equals(this.id))
             return;
 
-        if(!this.inboundEdges.containsKey(outEdge.getToNodeID())){
-            this.inboundEdges.put(outEdge.getToNodeID(), new LinkedList<>());
+        if(!this.inboundEdges.containsKey(outEdge.getHeadID())){
+            this.inboundEdges.put(outEdge.getHeadID(), new LinkedList<>());
         }
-        this.inboundEdges.get(outEdge.getToNodeID()).add(outEdge);
+        this.inboundEdges.get(outEdge.getHeadID()).add(outEdge);
     }
 
     @Override
     public void removeOutboundEdge(IEdge outEdge) {
-        this.outboundEdges.get(outEdge.getToNodeID()).remove(outEdge);
+        this.outboundEdges.get(outEdge.getHeadID()).remove(outEdge);
     }
 
     @Override
