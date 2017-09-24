@@ -9,8 +9,8 @@ public class SCCEdge extends Edge implements ISCCEdge{
 
     private String innerNodeID;
 
-    public SCCEdge(String fromNodeID, String toNodeID, String data, String innerNodeID) {
-        super(fromNodeID, toNodeID, data);
+    public SCCEdge(String id, String fromNodeID, String toNodeID, String data, String innerNodeID) {
+        super(id, fromNodeID, toNodeID, data);
         this.innerNodeID = innerNodeID;
     }
 

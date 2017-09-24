@@ -9,8 +9,8 @@ public class HyperEdge extends Edge implements IHyperEdge {
 
     private String vulnNodeID;
 
-    public HyperEdge(String fromNodeID, String toNodeID, String vulnNodeID, String data){
-        super(fromNodeID, toNodeID, data);
+    public HyperEdge(String id, String fromNodeID, String toNodeID, String vulnNodeID, String data){
+        super(id, fromNodeID, toNodeID, data);
         this.vulnNodeID = vulnNodeID;
     }
 

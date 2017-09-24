@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by Roberto Gaudenzi on 15/09/17.
  */
-public class JacksonGraphUtils {
+public class HAGJacksonUtils {
 
     /**
      * This methods takes an HyperGraph and stores it into a Json file.
@@ -85,6 +85,7 @@ public class JacksonGraphUtils {
         for(IHostNode node : nodes.values()) {
             for(IEdge outEdge : node.getOutboundEdges()){
                 ObjectNode edgeJson = mapper.createObjectNode();
+                edgeJson.put("edge_Ident", outEdge.getID());
                 edgeJson.put("edge_Data", outEdge.getData());
                 edgeJson.put("tail", outEdge.getTailID());
                 edgeJson.put("head", outEdge.getHeadID());
@@ -177,14 +178,15 @@ public class JacksonGraphUtils {
 
             // Get the edges
             JsonNode edgeListJson = graphJson.get("edges");
-            if(vulnListJson.isArray()){
+            if(edgeListJson.isArray()){
                 for(JsonNode eJson : edgeListJson){
+                    String edgeID   = eJson.get("edge_Ident").asText();
                     String edgeData = eJson.get("edge_Data").asText();
-                    String edgeTail = edgeListJson.get("tail").asText();
-                    String edgeHead = edgeListJson.get("head").asText();
-                    String edgeVuln = edgeListJson.get("vulnerability").asText();
+                    String edgeTail = eJson.get("tail").asText();
+                    String edgeHead = eJson.get("head").asText();
+                    String edgeVuln = eJson.get("vulnerability").asText();
 
-                    IEdge hyperEdge = new HyperEdge(edgeTail, edgeHead, edgeVuln, edgeData);
+                    IEdge hyperEdge = new HyperEdge(edgeID, edgeTail, edgeHead, edgeVuln, edgeData);
                     hyperGraph.addEdge(hyperEdge);
                 }
             }

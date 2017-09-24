@@ -5,6 +5,7 @@ package graphmodels.graph;
  */
 public interface IEdge {
 
+    String getID();
     String getTailID();
     String getHeadID();
     String getData();

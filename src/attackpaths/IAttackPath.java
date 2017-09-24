@@ -12,6 +12,7 @@ public interface IAttackPath {
     String getID();
 
     void addEdge(IEdge edge);
+    void addEdge(int rank, IEdge edge);
     IEdge replaceEdgeAtRank(int rank, IEdge edge);
     Map<Integer, IEdge> getEdges();
     IEdge getEdge(int rank);

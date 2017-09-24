@@ -84,9 +84,9 @@ public class JacksonSCCUtils {
             // Get the vulnerabilities
             JsonNode vulnListJson = graphJson.get("vulnerabilities");
             if(vulnListJson.isArray()){
-                for(JsonNode nJson : vulnListJson){
-                    String vID = nJson.get("node_Ident").asText();
-                    String vData = nJson.get("node_Data").asText();
+                for(JsonNode vJson : vulnListJson){
+                    String vID = vJson.get("node_Ident").asText();
+                    String vData = vJson.get("node_Data").asText();
                     IVulnNode v = new VulnerabilityNode(vID, vData);
                     hyperGraph.addVulnNode(v);
                 }
@@ -96,12 +96,13 @@ public class JacksonSCCUtils {
             JsonNode edgeListJson = graphJson.get("edges");
             if(edgeListJson.isArray()){
                 for(JsonNode eJson : edgeListJson){
+                    String edgeID   = eJson.get("edge_Ident").asText();
                     String edgeData = eJson.get("edge_Data").asText();
-                    String edgeTail = edgeListJson.get("tail").asText();
-                    String edgeHead = edgeListJson.get("head").asText();
-                    String edgeVuln = edgeListJson.get("vulnerability").asText();
+                    String edgeTail = eJson.get("tail").asText();
+                    String edgeHead = eJson.get("head").asText();
+                    String edgeVuln = eJson.get("vulnerability").asText();
 
-                    IEdge hyperEdge = new HyperEdge(edgeTail, edgeHead, edgeVuln, edgeData);
+                    IEdge hyperEdge = new HyperEdge(edgeID, edgeTail, edgeHead, edgeVuln, edgeData);
                     hyperGraph.addEdge(hyperEdge);
                 }
             }
@@ -270,12 +271,13 @@ public class JacksonSCCUtils {
         JsonNode edgeListJson = sccJson.get("inner_edges");
         if(edgeListJson.isArray()){
             for(JsonNode eJson : edgeListJson){
+                String edgeID   = eJson.get("edge_Ident").asText();
                 String edgeData = eJson.get("edge_Data").asText();
                 String edgeTail = edgeListJson.get("tail").asText();
                 String edgeHead = edgeListJson.get("head").asText();
                 String edgeVuln = edgeListJson.get("vulnerability").asText();
 
-                IEdge hyperEdge = new HyperEdge(edgeTail, edgeHead, edgeVuln, edgeData);
+                IEdge hyperEdge = new HyperEdge(edgeID, edgeTail, edgeHead, edgeVuln, edgeData);
                 sccNode.addInnerEdge(hyperEdge);
             }
         }

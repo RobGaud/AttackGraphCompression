@@ -23,7 +23,8 @@ import java.util.Map;
 public class GraphCompression implements IGraphCompression{
 
     private static final int MIN_SCC_SIZE = 4;
-    public static final String SCC_ID_PREFIX = "SCC_NODE_";
+    public static final String SCC_NODE_ID_PREFIX = "SCC_NODE_";
+    public static final String SCC_EDGE_ID_PREFIX = "SCC_EDGE_";
     private static int nextID = 0;
 
     private IGraph graphToCompress;
@@ -87,10 +88,10 @@ public class GraphCompression implements IGraphCompression{
                 this.graphToCompress.removeEdge(e);
                 if(!sccNode.hasInnerNode(e.getTailID())){
                     if(isHyperEdge(e))
-                        this.graphToCompress.addEdge(new SCCEdge(e.getTailID(), sccNodeID, e.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCEdge(SCC_EDGE_ID_PREFIX+e.getID(), e.getTailID(), sccNodeID, e.getData(), n.getID()));
                     else{
                         IHyperEdge he = (IHyperEdge)e;
-                        this.graphToCompress.addEdge(new SCCHyperEdge(he.getTailID(), sccNodeID, he.getVulnNodeID(),
+                        this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+he.getID(), he.getTailID(), sccNodeID, he.getVulnNodeID(),
                                                      he.getData(), n.getID()));
                     }
                 }
@@ -104,10 +105,10 @@ public class GraphCompression implements IGraphCompression{
                 this.graphToCompress.removeEdge(e);
                 if(!sccNode.hasInnerNode(e.getHeadID())){
                     if(isHyperEdge(e))
-                        this.graphToCompress.addEdge(new SCCEdge(sccNodeID, e.getHeadID(), e.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, e.getHeadID(), e.getData(), n.getID()));
                     else{
                         IHyperEdge he = (IHyperEdge)e;
-                        this.graphToCompress.addEdge(new SCCHyperEdge(sccNodeID, he.getHeadID(), he.getVulnNodeID(),
+                        this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, he.getHeadID(), he.getVulnNodeID(),
                                                      he.getData(), n.getID()));
                     }
                 }
@@ -119,7 +120,7 @@ public class GraphCompression implements IGraphCompression{
     }
 
     private static String getNextSCCNodeID(){
-        return SCC_ID_PREFIX + nextID++;
+        return SCC_NODE_ID_PREFIX + nextID++;
     }
 
     private boolean isHyperEdge(IEdge edge){

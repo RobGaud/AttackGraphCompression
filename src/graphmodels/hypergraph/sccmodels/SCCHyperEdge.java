@@ -10,8 +10,8 @@ public class SCCHyperEdge extends HyperEdge implements ISCCEdge{
 
     private String innerNodeID;
 
-    public SCCHyperEdge(String fromNodeID, String toNodeID, String vulnNodeID, String data, String innerNodeID) {
-        super(fromNodeID, toNodeID, vulnNodeID, data);
+    public SCCHyperEdge(String id, String fromNodeID, String toNodeID, String vulnNodeID, String data, String innerNodeID) {
+        super(id, fromNodeID, toNodeID, vulnNodeID, data);
         this.innerNodeID = innerNodeID;
     }
 

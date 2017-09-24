@@ -17,7 +17,7 @@ import java.io.File;
 /**
  * Created by Roberto Gaudenzi on 15/09/17.
  */
-public class ConversionUtils {
+public class HAGConversionUtils {
 
     /**
      * This method converts a graph taken from a Json file in an HyperGraph, and stores it in a new Json file.
@@ -63,6 +63,8 @@ public class ConversionUtils {
             // Since vulnerabilities are not stored into this graph, we need to extract them from the edges.
             JsonNode edgesArray = graphJson.get("attackPathEdges");
             for(JsonNode edgeJson : edgesArray){
+                String edgeID = edgeJson.get("edge_Ident").asText();
+
                 // Extract the tail
                 JsonNode tailJson = edgeJson.get("tail");
                 String tailID = tailJson.get("node_Ident").asText();
@@ -89,17 +91,40 @@ public class ConversionUtils {
                     IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData);
                     hyperGraph.addVulnNode(vulnNode);
 
-                    IEdge hyperEdge = new HyperEdge(tailID, headID, vulnID, "");
+                    /* PROBLEM: since we can create more than one hyperedge from a single edge,
+                     * we can't simply copy the edge_Ident field from the Json
+                     * IDEA: generate new IDs for the hyperedges using edge_Ident as root for all of them
+                     */
+                    String hyperedgeID = HyperEdgeIDGenerator.generateHyperEdgeID(edgeID);
+
+                    IEdge hyperEdge = new HyperEdge(hyperedgeID, tailID, headID, vulnID, "");
                     hyperGraph.addEdge(hyperEdge);
                 }
             }
 
             newFilename = "HAG_"+hyperGraph.getData()+".json";
-            JacksonGraphUtils.saveHAG(hyperGraph, dataFolderPath, newFilename);
+            HAGJacksonUtils.saveHAG(hyperGraph, dataFolderPath, newFilename);
         }
         catch (Exception e){
             e.printStackTrace();
         }
         return newFilename;
     }
+
+
+    private static class HyperEdgeIDGenerator{
+
+        private static String currentEdgeID;
+        private static int count;
+
+        private static String generateHyperEdgeID(String edgeID){
+            if(!edgeID.equals(currentEdgeID)){
+                currentEdgeID = edgeID;
+                count = 0;
+            }
+
+            return currentEdgeID + "-" + count++;
+        }
+    }
+
 }

@@ -7,11 +7,17 @@ public class Edge implements IEdge {
 
     private String fromNodeID, toNodeID;
     private String data;
+    private String id;
 
-    public Edge(String fromNodeID, String toNodeID, String data){
+    public Edge(String id, String fromNodeID, String toNodeID, String data){
         this.fromNodeID = fromNodeID;
         this.toNodeID = toNodeID;
         this.data = data;
+        this.id = id;
+    }
+
+    public String getID(){
+        return this.id;
     }
 
     @Override
@@ -36,5 +42,4 @@ public class Edge implements IEdge {
         }
         else return false;
     }
-
 }

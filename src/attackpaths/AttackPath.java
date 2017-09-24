@@ -31,6 +31,13 @@ public class AttackPath implements IAttackPath{
     }
 
     @Override
+    public void addEdge(int rank, IEdge edge) {
+        if(!this.edges.keySet().contains(rank)){
+            this.edges.put(rank, edge);
+        }
+    }
+
+    @Override
     public IEdge replaceEdgeAtRank(int rank, IEdge edge){
         if(!this.edges.keySet().contains(rank))
             return null;
