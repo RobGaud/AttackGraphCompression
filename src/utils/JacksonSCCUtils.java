@@ -14,6 +14,8 @@ import graphmodels.graph.sccmodels.ISCCNode;
 import graphmodels.graph.sccmodels.SCCNode;
 import graphmodels.hypergraph.*;
 
+import static utils.Constants.*;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -23,9 +25,6 @@ import java.util.Map;
  * Created by Roberto Gaudenzi on 23/09/17.
  */
 public class JacksonSCCUtils {
-
-    public static final String HOST_NODE_TYPE = "host_node";
-    public static final String SCC_NODE_TYPE = "scc_node";
 
     public IGraph loadCompressedHAG(String dataFolderPath, String filename){
         //TODO

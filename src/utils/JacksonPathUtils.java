@@ -19,13 +19,12 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.*;
 
+import static utils.Constants.*;
+
 /**
  * Created by Roberto Gaudenzi on 23/09/17.
  */
 public class JacksonPathUtils {
-
-    public static final String ATTACK_EDGE_TYPE = "attack_edge";
-    public static final String HYPER_EDGE_TYPE = "hyper_edge";
 
     public static Collection<IAttackPath> loadPaths(String dataFolderPath, String filename){
         Collection<IAttackPath> paths = new HashSet<>();

@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 
+import static utils.Constants.*;
+
 /**
  * Created by Roberto Gaudenzi on 16/09/17.
  *
@@ -22,9 +24,6 @@ import java.util.Map;
  */
 public class GraphCompression implements IGraphCompression{
 
-    private static final int MIN_SCC_SIZE = 4;
-    public static final String SCC_NODE_ID_PREFIX = "SCC_NODE_";
-    public static final String SCC_EDGE_ID_PREFIX = "SCC_EDGE_";
     private static int nextID = 0;
 
     private IGraph graphToCompress;

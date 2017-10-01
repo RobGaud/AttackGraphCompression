@@ -9,6 +9,8 @@ public interface IVulnNode {
 
     String getID();
     String getData();
+    void setCVSS(String cvss);
+    String getCVSS();
 
     /*** EDGE MANIPULATION METHODS ***/
     void addEdge(IHyperEdge edge);

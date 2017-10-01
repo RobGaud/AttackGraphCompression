@@ -12,7 +12,10 @@ import graphmodels.hypergraph.HyperGraph;
 import graphmodels.hypergraph.IVulnNode;
 import graphmodels.hypergraph.VulnerabilityNode;
 
+import static utils.Constants.*;
+
 import java.io.File;
+import java.util.Map;
 
 /**
  * Created by Roberto Gaudenzi on 15/09/17.
@@ -61,6 +64,9 @@ public class HAGConversionUtils {
 
             // Add the edges and the vulnerabilities to the hypergraph.
             // Since vulnerabilities are not stored into this graph, we need to extract them from the edges.
+            // We also load the map of CVSS scores in order to store it into the VulnerabilityNode objects.
+            Map<String, String> cveMap = JacksonCVEUtils.loadCVEJson(CVE_DATA_FILENAME);
+
             JsonNode edgesArray = graphJson.get("attackPathEdges");
             for(JsonNode edgeJson : edgesArray){
                 String edgeID = edgeJson.get("edge_Ident").asText();
@@ -87,8 +93,10 @@ public class HAGConversionUtils {
                     JsonNode vulnDataJson = vulnJson.get("classification").get(0);
                     String vulnID = vulnDataJson.get("ident").asText();
                     String vulnData = vulnDataJson.get("name").asText();
+                    // Get CVSS score
+                    String cvssScore = cveMap.get(vulnID);
 
-                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData);
+                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData, cvssScore);
                     hyperGraph.addVulnNode(vulnNode);
 
                     /* PROBLEM: since we can create more than one hyperedge from a single edge,

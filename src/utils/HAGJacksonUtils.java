@@ -76,6 +76,7 @@ public class HAGJacksonUtils {
             ObjectNode vulnJson = mapper.createObjectNode();
             vulnJson.put("node_Ident", vuln.getID());
             vulnJson.put("node_Data", vuln.getData());
+            vulnJson.put("cvss_score", vuln.getCVSS());
             vulnArray.add(vulnJson);
         }
         graphJson.putPOJO("vulnerabilities", vulnArray);
@@ -171,7 +172,8 @@ public class HAGJacksonUtils {
                 for(JsonNode nJson : vulnListJson){
                     String vID = nJson.get("node_Ident").asText();
                     String vData = nJson.get("node_Data").asText();
-                    IVulnNode v = new VulnerabilityNode(vID, vData);
+                    String cvssScore = nJson.get("cvss_score").asText();
+                    IVulnNode v = new VulnerabilityNode(vID, vData, cvssScore);
                     hyperGraph.addVulnNode(v);
                 }
             }
