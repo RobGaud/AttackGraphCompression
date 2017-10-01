@@ -12,10 +12,12 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static utils.Constants.*;
+
 /**
  * Created by Roberto Gaudenzi on 30/09/17.
  */
-public class CVEUtils {
+public class JacksonCVEUtils {
 
     private static Map<String, String> extractCVEDataListFromFile(String dataFolderPath, String filename){
         // Create an empty map
@@ -47,7 +49,16 @@ public class CVEUtils {
 
     private static String[] extractCVEDataFromJson(JsonNode cveJson){
         String cve = cveJson.get("cve").get("CVE_data_meta").get("ID").asText();
-        String cvss = cveJson.get("impact").get("baseMetricV2").get("cvssV2").get("baseScore").asText();
+        String cvss;
+        try{
+            cvss = cveJson.get("impact").get("baseMetricV2").get("cvssV2").get("baseScore").asText();
+        }
+        catch(NullPointerException e){
+            System.out.println("-------------------------------------------");
+            System.out.println("ERROR: CVSS NOT FOUND FOR CVE: " + cve + ". ASSIGNING DEFAULT VALUE.");
+            System.out.println("-------------------------------------------");
+            cvss = CVSS_DEFAULT_VALUE;
+        }
         String[] cveData = new String[2];
         cveData[0] = cve;
         cveData[1] = cvss;
@@ -55,10 +66,11 @@ public class CVEUtils {
     }
 
     public static void main(String[] args){
-        String[] filenames = {"cve-2001", "cve-2003", "cve-2004", "cve-2005",
-                              "cve-2006", "cve-2007", "cve-2008", "cve-2009"};
-        String dataFolderPath = "/home/roberto/ProgrammingProjects/IdeaProjects/cvedata";
-        String cveDataFilename = "cve-data";
+        String[] filenames = {"cve-2001.json", "cve-2003.json", "cve-2004.json", "cve-2005.json",
+                              "cve-2006.json", "cve-2007.json", "cve-2008.json", "cve-2009.json"};
+
+        String cveDataFolderPath = Constants.getIdeaHome() + PROJECT_HOME + DATA_HOME + CVE_DATA_HOME;
+        String cveDataFilename = "cve-data.json";
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode cvesJson = mapper.createObjectNode();
@@ -66,7 +78,7 @@ public class CVEUtils {
         // For each file, call extractCVEDataFromFile
         for(String filename : filenames){
             ArrayNode cveListJson = mapper.createArrayNode();
-            Map<String, String> cveMap = extractCVEDataListFromFile(dataFolderPath, filename);
+            Map<String, String> cveMap = extractCVEDataListFromFile(cveDataFolderPath, filename);
             // Add all the entries to the JsonNode
             for(Map.Entry<String, String> cve : cveMap.entrySet()){
                 ObjectNode cveJson = mapper.createObjectNode();
@@ -81,7 +93,7 @@ public class CVEUtils {
         // Store the Json in a file
         try{
             String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(cvesJson);
-            PrintWriter out = new PrintWriter(dataFolderPath + cveDataFilename);
+            PrintWriter out = new PrintWriter(cveDataFolderPath + cveDataFilename);
             out.print(jsonString);
             out.close();
             System.out.println("Successfully copied JSON Object to File named \""+cveDataFilename+"\".");
