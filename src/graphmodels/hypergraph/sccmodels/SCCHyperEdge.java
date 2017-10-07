@@ -6,8 +6,8 @@ import graphmodels.hypergraph.HyperEdge;
 /**
  * Created by Roberto Gaudenzi on 16/09/17.
  */
-public class SCCHyperEdge extends HyperEdge implements ISCCEdge{
-
+//public class SCCHyperEdge extends HyperEdge implements ISCCEdge{
+public class SCCHyperEdge extends HyperEdge implements ISCCHyperEdge{
     private String innerNodeID;
 
     public SCCHyperEdge(String id, String fromNodeID, String toNodeID, String vulnNodeID, String data, String innerNodeID) {

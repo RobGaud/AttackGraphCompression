@@ -111,7 +111,7 @@ public class HAGConversionUtils {
             }
 
             newFilename = "HAG_"+hyperGraph.getData()+".json";
-            HAGJacksonUtils.saveHAG(hyperGraph, dataFolderPath, newFilename);
+            JacksonHAGUtils.storeCompressedHAG(hyperGraph, dataFolderPath, newFilename);
         }
         catch (Exception e){
             e.printStackTrace();

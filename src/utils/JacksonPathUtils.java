@@ -12,8 +12,10 @@ import graphmodels.graph.AttackEdge;
 import graphmodels.graph.Edge;
 import graphmodels.graph.IAttackEdge;
 import graphmodels.graph.IEdge;
+import graphmodels.graph.sccmodels.ISCCAttackEdge;
 import graphmodels.hypergraph.HyperEdge;
 import graphmodels.hypergraph.IHyperEdge;
+import graphmodels.hypergraph.sccmodels.ISCCHyperEdge;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -39,33 +41,27 @@ public class JacksonPathUtils {
             Map<String, IEdge> edgesMap = new HashMap<>();
             if(edgeListJson.isArray()) {
                 for(JsonNode eJson : edgeListJson){
-                    String edgeID   = eJson.get("edge_Ident").asText();
-                    String edgeData = eJson.get("edge_Data").asText();
-                    String edgeTail = eJson.get("tail").asText();
-                    String edgeHead = eJson.get("head").asText();
-
-                    IEdge edge;
                     String edgeType = eJson.get("edge_Type").asText();
-                    if(edgeType.equals(ATTACK_EDGE_TYPE)){
-                        String edgeVuln = eJson.get("vulnerability").asText();
-                        edge = new HyperEdge(edgeID, edgeTail, edgeHead, edgeVuln, edgeData);
-                    }
-                    else if(edgeType.equals(HYPER_EDGE_TYPE)){
-                        IAttackEdge attackEdge = new AttackEdge(edgeID, edgeTail, edgeHead, edgeData);
-                        JsonNode vulnerabilitiesJson = eJson.get("vulnerabilities");
-                        if(vulnerabilitiesJson.isArray()){
-                            for(JsonNode vJson : vulnerabilitiesJson){
-                                String vulnID = vJson.get("vuln_Ident").asText();
-                                attackEdge.addVulnerability(vulnID);
-                            }
-                        }
-                        edge = attackEdge;
-                    }
-                    else{
-                        edge = new Edge(edgeID, edgeTail, edgeHead, edgeData);
+
+                    IEdge edge = null;
+                    switch (edgeType){
+                        case ATTACK_EDGE_TYPE:
+                            edge = JacksonEdgeUtils.loadAttackEdge(eJson);
+                            break;
+                        case HYPER_EDGE_TYPE:
+                            edge = JacksonEdgeUtils.loadHyperEdge(eJson);
+                            break;
+                        case SCC_ATTACK_EDGE_TYPE:
+                            edge = JacksonEdgeUtils.loadSCCAttackEdge(eJson);
+                            break;
+                        case SCC_HYPER_EDGE_TYPE:
+                            edge = JacksonEdgeUtils.loadSCCHyperEdge(eJson);
+                            break;
+                        default:
+                            System.err.print("ERROR: unexpected edge type.");
                     }
 
-                    edgesMap.put(edgeID, edge);
+                    edgesMap.put(edge.getID(), edge);
                 }
             }
 
@@ -97,7 +93,7 @@ public class JacksonPathUtils {
         return paths;
     }
 
-    public static void savePaths(String graphName, Collection<IAttackPath> paths, String dataFolderPath, String filename){
+    public static void storePaths(String graphName, Collection<IAttackPath> paths, String dataFolderPath, String filename){
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode pathsJson = mapper.createObjectNode();
 
@@ -128,26 +124,18 @@ public class JacksonPathUtils {
 
         ArrayNode edgeListJson = mapper.createArrayNode();
         for(IEdge edge : edgeSet){
-            ObjectNode edgeJson = mapper.createObjectNode();
-            edgeJson.put("edge_Ident", edge.getID());
-            edgeJson.put("edge_Data", edge.getData());
-            edgeJson.put("tail", edge.getTailID());
-            edgeJson.put("head", edge.getHeadID());
-
-            if(IAttackEdge.isAttackEdge(edge)){
-                edgeJson.put("edge_Type", ATTACK_EDGE_TYPE);
-                IAttackEdge attackEdge = (IAttackEdge)edge;
-                ArrayNode vulnListJson = mapper.createArrayNode();
-                for(String vulnID : attackEdge.getVulnerabilities()){
-                    ObjectNode vulnJson = mapper.createObjectNode();
-                    vulnJson.put("vuln_Ident", vulnID);
-                    vulnListJson.add(vulnJson);
-                }
+            ObjectNode edgeJson;
+            if(ISCCAttackEdge.isSCCAttackEdge(edge)){
+                edgeJson = JacksonEdgeUtils.storeSCCAttackEdge(mapper, (ISCCAttackEdge)edge);
             }
-            else if(IHyperEdge.isHyperEdge(edge)){
-                edgeJson.put("edge_Type", HYPER_EDGE_TYPE);
-                IHyperEdge hyperEdge = (IHyperEdge)edge;
-                edgeJson.put("vulnerability", hyperEdge.getVulnNodeID());
+            else if(ISCCHyperEdge.isSCCHyperEdge(edge)){
+                edgeJson = JacksonEdgeUtils.storeHyperEdge(mapper, (ISCCHyperEdge)edge);
+            }
+            else if(IAttackEdge.isAttackEdge(edge)){
+                edgeJson = JacksonEdgeUtils.storeAttackEdge(mapper, (IAttackEdge)edge);
+            }
+            else{
+                edgeJson = JacksonEdgeUtils.storeHyperEdge(mapper, (IHyperEdge)edge);
             }
 
             edgeListJson.add(edgeJson);

@@ -1,15 +1,15 @@
 package graphmodels.graph.sccmodels;
 
-import graphmodels.graph.Edge;
+import graphmodels.graph.AttackEdge;
 
 /**
  * Created by Roberto Gaudenzi on 16/09/17.
  */
-public class SCCEdge extends Edge implements ISCCEdge{
+public class SCCAttackEdge extends AttackEdge implements ISCCAttackEdge{
 
     private String innerNodeID;
 
-    public SCCEdge(String id, String fromNodeID, String toNodeID, String data, String innerNodeID) {
+    public SCCAttackEdge(String id, String fromNodeID, String toNodeID, String data, String innerNodeID) {
         super(id, fromNodeID, toNodeID, data);
         this.innerNodeID = innerNodeID;
     }
@@ -25,7 +25,7 @@ public class SCCEdge extends Edge implements ISCCEdge{
     @Override
     public boolean equals(Object o){
         if(this.getClass().equals(o.getClass()) && super.equals(o)){
-            SCCEdge edge = (SCCEdge)o;
+            SCCAttackEdge edge = (SCCAttackEdge)o;
             return this.innerNodeID.equals(edge.innerNodeID);
         }
         else return false;

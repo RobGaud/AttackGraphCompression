@@ -19,4 +19,18 @@ public interface ISCCNode extends IHostNode{
     void addInnerEdge(IEdge edge);
     void removeInnerEdge(IEdge edge);
     Map<String, Collection<IEdge>> getInnerEdges();
+
+    static boolean isSCCNode(IHostNode node){
+        if(node == null)
+            return false;
+
+        Class[] interfaces = node.getClass().getInterfaces();
+        for(Class c : interfaces){
+            if(c.equals(ISCCNode.class)){
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

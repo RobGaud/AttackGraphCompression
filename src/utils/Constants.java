@@ -21,11 +21,13 @@ public class Constants {
     public static final String SCC_NODE_ID_PREFIX = "SCC_NODE_";
     public static final String SCC_EDGE_ID_PREFIX = "SCC_EDGE_";
 
-    // Constants for JacksonPathUtils
+    // Constants for JacksonEdgeUtils
     public static final String ATTACK_EDGE_TYPE = "attack_edge";
     public static final String HYPER_EDGE_TYPE = "hyper_edge";
+    public static final String SCC_ATTACK_EDGE_TYPE = "scc_attack_edge";
+    public static final String SCC_HYPER_EDGE_TYPE = "scc_hyper_edge";
 
-    // Constants for JacksonSCCUtils
+    // Constants for JacksonNodeUtils
     public static final String HOST_NODE_TYPE = "host_node";
     public static final String SCC_NODE_TYPE = "scc_node";
 

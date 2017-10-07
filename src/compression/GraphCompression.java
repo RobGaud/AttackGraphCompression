@@ -3,7 +3,7 @@ package compression;
 import graphmodels.graph.IEdge;
 import graphmodels.graph.IGraph;
 import graphmodels.graph.IHostNode;
-import graphmodels.graph.sccmodels.SCCEdge;
+import graphmodels.graph.sccmodels.SCCAttackEdge;
 import graphmodels.graph.sccmodels.SCCNode;
 import graphmodels.hypergraph.IHyperEdge;
 import graphmodels.hypergraph.sccmodels.SCCHyperEdge;
@@ -87,7 +87,7 @@ public class GraphCompression implements IGraphCompression{
                 this.graphToCompress.removeEdge(e);
                 if(!sccNode.hasInnerNode(e.getTailID())){
                     if(isHyperEdge(e))
-                        this.graphToCompress.addEdge(new SCCEdge(SCC_EDGE_ID_PREFIX+e.getID(), e.getTailID(), sccNodeID, e.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX+e.getID(), e.getTailID(), sccNodeID, e.getData(), n.getID()));
                     else{
                         IHyperEdge he = (IHyperEdge)e;
                         this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+he.getID(), he.getTailID(), sccNodeID, he.getVulnNodeID(),
@@ -104,7 +104,7 @@ public class GraphCompression implements IGraphCompression{
                 this.graphToCompress.removeEdge(e);
                 if(!sccNode.hasInnerNode(e.getHeadID())){
                     if(isHyperEdge(e))
-                        this.graphToCompress.addEdge(new SCCEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, e.getHeadID(), e.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, e.getHeadID(), e.getData(), n.getID()));
                     else{
                         IHyperEdge he = (IHyperEdge)e;
                         this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, he.getHeadID(), he.getVulnNodeID(),
