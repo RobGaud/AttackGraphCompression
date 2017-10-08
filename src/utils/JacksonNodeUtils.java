@@ -39,7 +39,8 @@ class JacksonNodeUtils {
         String vID = vulnJson.get("node_Ident").asText();
         String vData = vulnJson.get("node_Data").asText();
         String cvssScore = vulnJson.get("cvss_score").asText();
-        return new VulnerabilityNode(vID, vData, cvssScore);
+        String complexityScore = vulnJson.get("complexity_Score").asText();
+        return new VulnerabilityNode(vID, vData, cvssScore, complexityScore);
     }
 
     public static ISCCNode loadSCCNode(JsonNode sccJson){
@@ -94,6 +95,7 @@ class JacksonNodeUtils {
         vulnJson.put("node_Ident", vuln.getID());
         vulnJson.put("node_Data", vuln.getData());
         vulnJson.put("cvss_score", vuln.getCVSS());
+        vulnJson.put("complexity_Score", vuln.getComplexityScore());
         return vulnJson;
     }
 

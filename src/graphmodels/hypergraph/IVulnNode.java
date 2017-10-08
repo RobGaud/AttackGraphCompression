@@ -12,6 +12,9 @@ public interface IVulnNode {
     void setCVSS(String cvss);
     String getCVSS();
 
+    void setComplexityScore(String score);
+    String getComplexityScore();
+
     /*** EDGE MANIPULATION METHODS ***/
     void addEdge(IHyperEdge edge);
     void removeEdge(IHyperEdge edge);

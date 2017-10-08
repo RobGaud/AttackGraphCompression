@@ -6,6 +6,7 @@ package utils;
 public class Constants {
 
     public static final String CVSS_DEFAULT_VALUE = "5.0";
+    public static final String COMPLEXITY_DEFAULT_VALUE = "MEDIUM";
 
     private static final String LINUX_IDEA_HOME = "/home/roberto/ProgrammingProjects/IdeaProjects/";
     private static final String WINDOWS_IDEA_HOME = "";

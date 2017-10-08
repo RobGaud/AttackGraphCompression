@@ -18,4 +18,7 @@ public interface IAttackPath {
     IEdge getEdge(int rank);
 
     int getLength();
+
+    float getLikelihood();
+    void setLikelihood(float likelihood);
 }

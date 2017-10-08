@@ -57,6 +57,11 @@ public class HostNode implements IHostNode {
     }
 
     @Override
+    public Collection<IEdge> getInboundEdgesFrom(IHostNode tail) {
+        return this.inboundEdges.get(tail.getID());
+    }
+
+    @Override
     public void addOutboundEdge(IEdge outEdge) {
         // One cannot add an outbound edge to node N if the tail of the edge is not N itself
         if(!outEdge.getTailID().equals(this.id))
@@ -81,6 +86,11 @@ public class HostNode implements IHostNode {
             inboundEdges.addAll(c);
         }
         return inboundEdges;
+    }
+
+    @Override
+    public Collection<IEdge> getOutboundEdgesTo(IHostNode head) {
+        return this.outboundEdges.get(head.getID());
     }
 
     public int hashCode(){ return this.id.hashCode(); }

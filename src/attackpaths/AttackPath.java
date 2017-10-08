@@ -11,11 +11,16 @@ import java.util.Map;
 public class AttackPath implements IAttackPath{
 
     private String id;
+    private float likelihood;
     private Map<Integer, IEdge> edges;
 
-    public AttackPath(String id){
+    public AttackPath(String id, float likelihood){
         this.id = id;
         this.edges = new HashMap<>();
+    }
+
+    public AttackPath(String id){
+        this(id, 0.0f);
     }
 
     public String getID(){
@@ -64,4 +69,16 @@ public class AttackPath implements IAttackPath{
     public int getLength(){
         return this.edges.keySet().size();
     }
+
+    @Override
+    public float getLikelihood() {
+        return this.likelihood;
+    }
+
+    @Override
+    public void setLikelihood(float likelihood) {
+        this.likelihood = likelihood;
+    }
+
+
 }
