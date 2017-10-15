@@ -1,30 +1,24 @@
 package likelihood;
 
 import graphmodels.graph.IEdge;
-import graphmodels.graph.IGraph;
 import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.IHyperEdge;
 import graphmodels.hypergraph.IHyperGraph;
 import graphmodels.hypergraph.IVulnNode;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
+import static utils.Constants.getAccessComplexityScore;
 
 /**
  * Created by Roberto Gaudenzi on 08/10/17.
  */
 public class ComputeTransitionProb {
 
-    private static Map<Integer, String> indicesMatrix;
+    public static Float[][] execute(IHyperGraph graph, IHostNode target, Map<Integer, String> indicesMatrix, float epsilon){
 
-
-    public static Float[][] computeProbMatrix(IHyperGraph graph, IHostNode target, Set<IHostNode> subgraph, float epsilon){
-
-        assignIndices(target, subgraph);
-
-        int n = subgraph.size();
+        int n = indicesMatrix.values().size();
 
         Float[][] probMatrix = new Float[n][n];
 
@@ -69,37 +63,5 @@ public class ComputeTransitionProb {
         float n_ij = n_num / n_den;
 
         return (1-epsilon)*m_ij + epsilon*n_ij;
-    }
-
-    private static void assignIndices(IHostNode target, Set<IHostNode> subgraph){
-        indicesMatrix = new HashMap<>();
-        // Assign index 'n' to the target
-        indicesMatrix.put(subgraph.size(), target.getID());
-        int i = 0;
-        for(IHostNode node : subgraph){
-            if(!node.equals(target)){
-                indicesMatrix.put(i, node.getID());
-                i++;
-            }
-        }
-    }
-
-    public static float getAccessComplexityScore(String ac){
-        float score;
-        switch (ac){
-            case "LOW":
-                score = 0.33f;
-                break;
-            case "MEDIUM":
-                score = 0.50f;
-                break;
-            case "HIGH":
-                score = 0.67f;
-                break;
-            default:
-                System.err.println("ERROR: UNEXPECTED ACCESS COMPLEXITY VALUE = " + ac);
-                score = 0.50f;
-        }
-        return score;
     }
 }

@@ -28,8 +28,8 @@ import static utils.Constants.*;
  */
 public class JacksonPathUtils {
 
-    public static Collection<IAttackPath> loadPaths(String dataFolderPath, String filename){
-        Collection<IAttackPath> paths = new HashSet<>();
+    public static Map<String, IAttackPath> loadPaths(String dataFolderPath, String filename){
+        Map<String, IAttackPath> paths = new HashMap<>();
         try {
             JsonFactory jsonFactory = new JsonFactory();
             JsonParser jp = jsonFactory.createParser(new File(dataFolderPath + filename));
@@ -61,7 +61,8 @@ public class JacksonPathUtils {
                             System.err.print("ERROR: unexpected edge type.");
                     }
 
-                    edgesMap.put(edge.getID(), edge);
+                    if(edge != null)
+                        edgesMap.put(edge.getID(), edge);
                 }
             }
 
@@ -70,7 +71,8 @@ public class JacksonPathUtils {
             if(pathListJson.isArray()) {
                 for(JsonNode pathJson : pathListJson){
                     String pathID = pathJson.get("path_Ident").asText();
-                    IAttackPath path = new AttackPath(pathID);
+                    float likelihood = (float)pathJson.get("likelihood").asDouble();
+                    IAttackPath path = new AttackPath(pathID, likelihood);
 
                     JsonNode pathEdgesJson = pathJson.get("path_Edges");
                     if(pathEdgesJson.isArray()){
@@ -83,7 +85,7 @@ public class JacksonPathUtils {
                         }
                     }
 
-                    paths.add(path);
+                    paths.put(path.getID(), path);
                 }
             }
         }
@@ -104,6 +106,7 @@ public class JacksonPathUtils {
         for(IAttackPath path : paths){
             ObjectNode pathJson = mapper.createObjectNode();
             pathJson.put("path_Ident", path.getID());
+            pathJson.put("likelihood", path.getLikelihood());
 
             ArrayNode edgeListJson = mapper.createArrayNode();
             for(Map.Entry<Integer, IEdge> entry : path.getEdges().entrySet()){

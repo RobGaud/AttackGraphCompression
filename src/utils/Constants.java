@@ -49,4 +49,27 @@ public class Constants {
         return getDataHome() + CVE_DATA_HOME;
     }
 
+    public static float getAccessComplexityScore(String ac){
+        float score;
+        switch (ac){
+            case "LOW":
+                score = 0.33f;
+                break;
+            case "MEDIUM":
+                score = 0.50f;
+                break;
+            case "HIGH":
+                score = 0.67f;
+                break;
+            default:
+                System.err.println("ERROR: UNEXPECTED ACCESS COMPLEXITY VALUE = " + ac);
+                score = 0.50f;
+        }
+        return score;
+    }
+
+
+    public static final float EPSILON = 0.50f;
+
+    public static final int MAX_PATH_LENGTH = 4;
 }
