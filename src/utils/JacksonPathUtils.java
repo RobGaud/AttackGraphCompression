@@ -70,21 +70,7 @@ public class JacksonPathUtils {
             JsonNode pathListJson = pathsJson.get("paths");
             if(pathListJson.isArray()) {
                 for(JsonNode pathJson : pathListJson){
-                    String pathID = pathJson.get("path_Ident").asText();
-                    float likelihood = (float)pathJson.get("likelihood").asDouble();
-                    IAttackPath path = new AttackPath(pathID, likelihood);
-
-                    JsonNode pathEdgesJson = pathJson.get("path_Edges");
-                    if(pathEdgesJson.isArray()){
-                        for(JsonNode edgeJson : pathEdgesJson){
-                            int rank = Integer.parseInt(edgeJson.get("rank").asText());
-
-                            String edgeID = edgeJson.get("edge_Ident").asText();
-                            IEdge pathEdge = edgesMap.get(edgeID);
-                            path.addEdge(rank, pathEdge);
-                        }
-                    }
-
+                    IAttackPath path = loadAttackPath(pathJson, edgesMap);
                     paths.put(path.getID(), path);
                 }
             }
@@ -97,32 +83,18 @@ public class JacksonPathUtils {
 
     public static void storePaths(String graphName, Collection<IAttackPath> paths, String dataFolderPath, String filename){
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode pathsJson = mapper.createObjectNode();
+        ObjectNode finalJson = mapper.createObjectNode();
 
-        pathsJson.put("attackGraph_Ident", graphName);
+        finalJson.put("attackGraph_Ident", graphName);
 
         ArrayNode pathsListJson = mapper.createArrayNode();
         Set<IEdge> edgeSet = new HashSet<>();
         for(IAttackPath path : paths){
-            ObjectNode pathJson = mapper.createObjectNode();
-            pathJson.put("path_Ident", path.getID());
-            pathJson.put("likelihood", path.getLikelihood());
-
-            ArrayNode edgeListJson = mapper.createArrayNode();
-            for(Map.Entry<Integer, IEdge> entry : path.getEdges().entrySet()){
-                int rank = entry.getKey();
-                IEdge edge = entry.getValue();
-                edgeSet.add(edge);
-
-                ObjectNode edgeJson = mapper.createObjectNode();
-                edgeJson.put("rank", rank);
-                edgeJson.put("edgeID", edge.getID());
-
-                edgeListJson.add(edgeJson);
-            }
-            pathJson.putPOJO("path_edges", edgeListJson);
+            ObjectNode pathJson = storeAttackPath(mapper, path);
+            edgeSet.addAll(getEdgesFromPath(path));
+            pathsListJson.add(pathJson);
         }
-        pathsJson.putPOJO("paths", pathsListJson);
+        finalJson.putPOJO("paths", pathsListJson);
 
 
         ArrayNode edgeListJson = mapper.createArrayNode();
@@ -143,11 +115,11 @@ public class JacksonPathUtils {
 
             edgeListJson.add(edgeJson);
         }
-        pathsJson.putPOJO("edges", edgeListJson);
+        finalJson.putPOJO("edges", edgeListJson);
 
         // Save Json to file
         try{
-            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(pathsJson);
+            String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(finalJson);
             PrintWriter out = new PrintWriter(dataFolderPath + filename);
             out.print(jsonString);
             out.close();
@@ -157,5 +129,51 @@ public class JacksonPathUtils {
             e.printStackTrace();
             System.out.println("An error occurred while copying JSON Object to File named \""+filename+"\".");
         }
+    }
+
+    /** METHOD FOR LOADING SINGLE PATH **/
+    static IAttackPath loadAttackPath(JsonNode pathJson, Map<String, IEdge> edgesMap){
+        String pathID = pathJson.get("path_Ident").asText();
+        float likelihood = (float)pathJson.get("likelihood").asDouble();
+        IAttackPath path = new AttackPath(pathID, likelihood);
+
+        JsonNode pathEdgesJson = pathJson.get("path_Edges");
+        if(pathEdgesJson.isArray()){
+            for(JsonNode edgeJson : pathEdgesJson){
+                int rank = Integer.parseInt(edgeJson.get("rank").asText());
+
+                String edgeID = edgeJson.get("edge_Ident").asText();
+                IEdge pathEdge = edgesMap.get(edgeID);
+                path.addEdge(rank, pathEdge);
+            }
+        }
+
+        return path;
+    }
+
+    /** METHOD FOR STORING SINGLE PATH **/
+    static ObjectNode storeAttackPath(ObjectMapper mapper, IAttackPath path) {
+        ObjectNode pathJson = mapper.createObjectNode();
+        pathJson.put("path_Ident", path.getID());
+        pathJson.put("likelihood", path.getLikelihood());
+
+        ArrayNode edgeListJson = mapper.createArrayNode();
+        for(Map.Entry<Integer, IEdge> entry : path.getEdges().entrySet()){
+            int rank = entry.getKey();
+            IEdge edge = entry.getValue();
+
+            ObjectNode edgeJson = mapper.createObjectNode();
+            edgeJson.put("rank", rank);
+            edgeJson.put("edgeID", edge.getID());
+
+            edgeListJson.add(edgeJson);
+        }
+        pathJson.putPOJO("path_edges", edgeListJson);
+
+        return pathJson;
+    }
+
+    static Collection<IEdge> getEdgesFromPath(IAttackPath path){
+        return path.getEdges().values();
     }
 }
