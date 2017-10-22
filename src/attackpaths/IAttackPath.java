@@ -23,4 +23,7 @@ public interface IAttackPath {
 
     float getLikelihood();
     void setLikelihood(float likelihood);
+
+    int hashCode();
+    boolean equals(Object o);
 }

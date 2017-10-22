@@ -86,5 +86,29 @@ public class AttackPath implements IAttackPath{
         this.likelihood = likelihood;
     }
 
+    public int hashCode(){
+        int hashCode = 0;
+        for(int rank : edges.keySet()){
+            hashCode += rank * edges.get(rank).hashCode();
+        }
+        return hashCode;
+    }
 
+    public boolean equals(Object o){
+        if(this.getClass().equals(o.getClass())){
+            AttackPath path = (AttackPath) o;
+
+            if(this.getLength() != path.getLength())
+                return false;
+
+            for(int rank : this.edges.keySet()){
+                if(!this.getEdge(rank).equals(path.getEdge(rank)))
+                    return false;
+            }
+
+            // If we get here, then the paths have equal length and have equal edges at each step => they're equal
+            return true;
+        }
+        else return false;
+    }
 }
