@@ -72,4 +72,6 @@ public class Constants {
     public static final float EPSILON = 0.50f;
 
     public static final int MAX_PATH_LENGTH = 4;
+
+    public static final int MAX_INNER_PATH_LENGTH = 4;
 }

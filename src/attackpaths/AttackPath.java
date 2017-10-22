@@ -28,6 +28,12 @@ public class AttackPath implements IAttackPath{
     }
 
     @Override
+    public String getTargetID(){
+        int lastEdgeRank = edges.keySet().size()-1;
+        return  edges.get(lastEdgeRank).getHeadID();
+    }
+
+    @Override
     public void addEdge(IEdge edge) {
         if(!this.edges.values().contains(edge)){
             int rank = this.edges.keySet().size();

@@ -95,8 +95,8 @@ public class HAGConversionUtils {
                     String vulnData = vulnDataJson.get("name").asText();
                     // Get CVSS score
                     String cvssScore = cveMap.get(vulnID);
-
-                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData, cvssScore);
+                    //TODO check this out
+                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData, cvssScore, "");
                     hyperGraph.addVulnNode(vulnNode);
 
                     /* PROBLEM: since we can create more than one hyperedge from a single edge,

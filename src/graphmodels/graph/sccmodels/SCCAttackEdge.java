@@ -7,26 +7,33 @@ import graphmodels.graph.AttackEdge;
  */
 public class SCCAttackEdge extends AttackEdge implements ISCCAttackEdge{
 
-    private String innerNodeID;
+    private String innerTailID, innerHeadID;
 
-    public SCCAttackEdge(String id, String fromNodeID, String toNodeID, String data, String innerNodeID) {
+    public SCCAttackEdge(String id, String fromNodeID, String toNodeID, String data, String innerTailID, String innerHeadID) {
         super(id, fromNodeID, toNodeID, data);
-        this.innerNodeID = innerNodeID;
+        this.innerTailID = innerTailID;
+        this.innerHeadID = innerHeadID;
+
     }
 
     @Override
-    public String getInnerNode() {
-        return this.innerNodeID;
+    public String getInnerTail() {
+        return this.innerTailID;
     }
 
     @Override
-    public int hashCode(){ return super.hashCode() + this.innerNodeID.hashCode(); }
+    public String getInnerHead() {
+        return this.innerHeadID;
+    }
+
+    @Override
+    public int hashCode(){ return super.hashCode() + this.innerTailID.hashCode() + this.innerHeadID.hashCode(); }
 
     @Override
     public boolean equals(Object o){
         if(this.getClass().equals(o.getClass()) && super.equals(o)){
             SCCAttackEdge edge = (SCCAttackEdge)o;
-            return this.innerNodeID.equals(edge.innerNodeID);
+            return this.innerTailID.equals(edge.innerTailID) && this.innerHeadID.equals(edge.innerHeadID);
         }
         else return false;
     }

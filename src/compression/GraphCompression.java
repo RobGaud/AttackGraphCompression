@@ -83,15 +83,18 @@ public class GraphCompression implements IGraphCompression{
 
         // Convert all their edges into edges of the SCCNode
         for(IHostNode n : scc){
+
+            // 1) for each inbound edge 'e' of node 'n', replace it with an SCCEdge/SCCHyperEdge where 'n' is the inner head
             for(IEdge e: n.getInboundEdges()){
                 this.graphToCompress.removeEdge(e);
                 if(!sccNode.hasInnerNode(e.getTailID())){
                     if(isHyperEdge(e))
-                        this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX+e.getID(), e.getTailID(), sccNodeID, e.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX+e.getID(), e.getTailID(), sccNodeID,
+                                                        e.getData(), null, n.getID()));
                     else{
                         IHyperEdge he = (IHyperEdge)e;
-                        this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+he.getID(), he.getTailID(), sccNodeID, he.getVulnNodeID(),
-                                                     he.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+he.getID(), he.getTailID(), sccNodeID,
+                                                        he.getVulnNodeID(), he.getData(), null, n.getID()));
                     }
                 }
                 else{
@@ -100,15 +103,17 @@ public class GraphCompression implements IGraphCompression{
                 }
             }
 
+            // 2) for each outbound edge 'e' of node 'n', replace it with an SCCEdge/SCCHyperEdge where 'n' is the inner tail
             for(IEdge e: n.getOutboundEdges()){
                 this.graphToCompress.removeEdge(e);
                 if(!sccNode.hasInnerNode(e.getHeadID())){
                     if(isHyperEdge(e))
-                        this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, e.getHeadID(), e.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, e.getHeadID(),
+                                                        e.getData(), n.getID(), null));
                     else{
                         IHyperEdge he = (IHyperEdge)e;
-                        this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, he.getHeadID(), he.getVulnNodeID(),
-                                                     he.getData(), n.getID()));
+                        this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX+e.getID(), sccNodeID, he.getHeadID(),
+                                                        he.getVulnNodeID(), he.getData(), n.getID(), null));
                     }
                 }
             }

@@ -54,9 +54,10 @@ class JacksonEdgeUtils {
         String edgeData = sccaeJson.get("edge_Data").asText();
         String edgeTail = sccaeJson.get("tail").asText();
         String edgeHead = sccaeJson.get("head").asText();
-        String innerNode = sccaeJson.get("inner_Node").asText();
+        String innerTail = sccaeJson.get("inner_Tail").asText();
+        String innerHead = sccaeJson.get("inner_Head").asText();
 
-        return new SCCAttackEdge(edgeID, edgeTail, edgeHead, edgeData, innerNode);
+        return new SCCAttackEdge(edgeID, edgeTail, edgeHead, edgeData, innerTail, innerHead);
     }
 
     static ISCCHyperEdge loadSCCHyperEdge(JsonNode sccheJson){
@@ -65,9 +66,10 @@ class JacksonEdgeUtils {
         String edgeTail = sccheJson.get("tail").asText();
         String edgeHead = sccheJson.get("head").asText();
         String edgeVuln = sccheJson.get("vulnerability").asText();
-        String innerNode = sccheJson.get("inner_Node").asText();
+        String innerTail = sccheJson.get("inner_Tail").asText();
+        String innerHead = sccheJson.get("inner_Head").asText();
 
-        return new SCCHyperEdge(edgeID, edgeTail, edgeHead, edgeVuln, edgeData, innerNode);
+        return new SCCHyperEdge(edgeID, edgeTail, edgeHead, edgeVuln, edgeData, innerTail, innerHead);
     }
 
     /** METHODS FOR STORING EDGES **/
@@ -104,7 +106,8 @@ class JacksonEdgeUtils {
         edgeJson.put("edge_Data", sccaeEdge.getData());
         edgeJson.put("tail", sccaeEdge.getTailID());
         edgeJson.put("head", sccaeEdge.getHeadID());
-        edgeJson.put("inner_Node", sccaeEdge.getInnerNode());
+        edgeJson.put("inner_Tail", sccaeEdge.getInnerTail());
+        edgeJson.put("inner_Head", sccaeEdge.getInnerHead());
 
         ArrayNode vulnArray = mapper.createArrayNode();
         for(String v : sccaeEdge.getVulnerabilities()){
@@ -122,7 +125,8 @@ class JacksonEdgeUtils {
         edgeJson.put("tail", sccheEdge.getTailID());
         edgeJson.put("head", sccheEdge.getHeadID());
         edgeJson.put("vulnerability", sccheEdge.getVulnNodeID());
-        edgeJson.put("inner_Node", sccheEdge.getInnerNode());
+        edgeJson.put("inner_Tail", sccheEdge.getInnerTail());
+        edgeJson.put("inner_Head", sccheEdge.getInnerHead());
 
         return edgeJson;
     }

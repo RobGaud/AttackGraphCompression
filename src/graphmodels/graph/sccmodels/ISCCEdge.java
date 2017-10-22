@@ -5,5 +5,6 @@ package graphmodels.graph.sccmodels;
  */
 public interface ISCCEdge {
 
-    String getInnerNode();
+    String getInnerTail();
+    String getInnerHead();
 }
