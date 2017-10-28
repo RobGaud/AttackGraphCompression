@@ -35,7 +35,7 @@ public class JacksonACUtils {
             if(cvesArray.isArray()){
                 // for each object in it, extract the CVE code and the CVSS score and add them to the map
                 for(JsonNode cveJson : cvesArray){
-                    String[] cveEntry = extractCVEDataFromJson(cveJson);
+                    String[] cveEntry = extractCVEDataFromJson(cveJson, filename);
                     cveData.put(cveEntry[0], cveEntry[1]);
                 }
             }
@@ -47,7 +47,7 @@ public class JacksonACUtils {
         return cveData;
     }
 
-    private static String[] extractCVEDataFromJson(JsonNode cveJson){
+    private static String[] extractCVEDataFromJson(JsonNode cveJson, String filename){
         String cve = cveJson.get("cve").get("CVE_data_meta").get("ID").asText();
         String complexity;
         try{
@@ -55,7 +55,7 @@ public class JacksonACUtils {
         }
         catch(NullPointerException e){
             System.out.println("-------------------------------------------");
-            System.out.println("ERROR: COMPLEXITY NOT FOUND FOR CVE: " + cve + ". ASSIGNING DEFAULT VALUE.");
+            System.out.println("ERROR in " + filename + ": COMPLEXITY NOT FOUND FOR CVE: " + cve + ". ASSIGNING DEFAULT VALUE.");
             System.out.println("-------------------------------------------");
             complexity = COMPLEXITY_DEFAULT_VALUE;
         }
@@ -74,7 +74,7 @@ public class JacksonACUtils {
             jp.setCodec(new ObjectMapper());
             JsonNode json = jp.readValueAsTree();
 
-            JsonNode cveListObject = json.get("cve-cvss");
+            JsonNode cveListObject = json.get("cve-complexity");
             if(cveListObject.isArray()){
                 for(JsonNode pairObject : cveListObject){
                     String cve = pairObject.get("cve").asText();
@@ -90,9 +90,8 @@ public class JacksonACUtils {
     }
 
     public static void main(String[] args){
-        //String[] filenames = {"cve-2001.json", "cve-2003.json", "cve-2004.json", "cve-2005.json",
-        //                      "cve-2006.json", "cve-2007.json", "cve-2008.json", "cve-2009.json"};
-        String[] filenames = {"cve-2004.json"};
+        String[] filenames = {"nvdcve-1.0-2002.json", "nvdcve-1.0-2003.json", "nvdcve-1.0-2004.json", "nvdcve-1.0-2005.json",
+                              "nvdcve-1.0-2006.json", "nvdcve-1.0-2007.json", "nvdcve-1.0-2008.json", "nvdcve-1.0-2009.json"};
 
         String cveDataFolderPath = Constants.getIdeaHome() + PROJECT_HOME + DATA_HOME + CVE_DATA_HOME;
         String cveDataFilename = "access-complexity-data.json";
@@ -101,8 +100,8 @@ public class JacksonACUtils {
         ObjectNode cvesJson = mapper.createObjectNode();
 
         // For each file, call extractCVEDataFromFile
+        ArrayNode cveListJson = mapper.createArrayNode();
         for(String filename : filenames){
-            ArrayNode cveListJson = mapper.createArrayNode();
             Map<String, String> cveMap = extractCVEDataListFromFile(cveDataFolderPath, filename);
             // Add all the entries to the JsonNode
             for(Map.Entry<String, String> cve : cveMap.entrySet()){

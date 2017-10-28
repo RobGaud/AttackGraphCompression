@@ -1,27 +1,25 @@
 package main;
 
 import graphmodels.graph.IHostNode;
-import graphmodels.hypergraph.HyperGraph;
+import graphmodels.hypergraph.IHyperGraph;
 import utils.Constants;
 import utils.HAGConversionUtils;
-import utils.HAGJacksonUtils;
+import utils.JacksonHAGUtils;
 
-public class UtilsMain {
+public class HAGBuildingMain {
 
     public static void main(String[] args){
         String dataFolderPath = Constants.getDataHome();
         String GRAPH_JSON_NAME = "attack_graph.json";
 
         String hag_filename = HAGConversionUtils.convertJson(dataFolderPath, GRAPH_JSON_NAME);
-        //String hag_filename = "HAG_62ceab57-afe9-4ee7-9a4c-1f03b2767120.json";
 
-        HyperGraph hyperGraph = HAGJacksonUtils.loadHAG(dataFolderPath, hag_filename);
-        //printHAG(hyperGraph);
-        // HyperGraph compressed_hag = GraphCompression.compress(hyperGraph);
-        HAGJacksonUtils.saveHAG(hyperGraph, dataFolderPath, hag_filename);
+        IHyperGraph hyperGraph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, hag_filename);
+        printHAG(hyperGraph);
+        JacksonHAGUtils.storeCompressedHAG(hyperGraph, dataFolderPath, hag_filename);
     }
 
-    private static void printHAG(HyperGraph hyperGraph){
+    private static void printHAG(IHyperGraph hyperGraph){
         System.out.println("HyperGraph data = " + hyperGraph.getData());
 
         System.out.println("HyperGraph entry points = ");
