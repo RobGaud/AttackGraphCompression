@@ -46,6 +46,11 @@ public class Graph implements IGraph {
     public Map<String, IHostNode> getHostNodes() { return this.nodes; }
 
     @Override
+    public boolean containsHostNode(String nodeID){
+        return this.nodes.keySet().contains(nodeID);
+    }
+
+    @Override
     public void addEntryPoint(IHostNode entryPoint) {
         this.entryPoints.add(entryPoint);
         this.addHostNode(entryPoint);

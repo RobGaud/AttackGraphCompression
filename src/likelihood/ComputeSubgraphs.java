@@ -28,11 +28,13 @@ public class ComputeSubgraphs {
         return subgraphs;
     }
 
-    private static void recursive(IHostNode target, IHostNode current,IGraph graph){
+    private static void recursive(IHostNode target, IHostNode current, IGraph graph){
         Collection<IEdge> inboundEdges = current.getInboundEdges();
         for(IEdge edge : inboundEdges){
             IHostNode parent = graph.getNode(edge.getTailID());
+            System.out.println("### BUILDING SUBGRAPH FOR TARGET: " + target.getID() + ". ARRIVED TO NODE: " + current.getID());
             if(!subgraphs.get(target.getID()).contains(parent)){
+                System.out.println("##### BUILDING SUBGRAPH FOR TARGET: " + target.getID() + ". FOUND NEW NODE.");
                 subgraphs.get(target.getID()).add(parent);
                 recursive(target, parent, graph);
             }

@@ -30,7 +30,9 @@ public class AttackPathComputation{
     public Collection<IAttackPath> computePaths() {
 
         for(IHostNode entryPoint : graph.getEntryPoints()){
+            System.out.println("##### START COMPUTING PATHS FROM ENTRY POINT: " + entryPoint.getID());
             this.currentPath = new LinkedList<>();
+            // Inserting a dummy edge
             computePathsFrom(entryPoint, 0);
         }
 
@@ -55,10 +57,15 @@ public class AttackPathComputation{
         }
         // When we exit from the for cycle, all the paths computable from node have been computed.
         // Hence, we can remove it from the current path.
-        this.currentPath.pop();
+        if(this.currentPath.size() > 0)
+            this.currentPath.pop();
     }
 
     private boolean checkIfNewNode(IHostNode node){
+        //Check whether the path is still empty or not
+        if(this.currentPath.size() == 0)
+            return true;
+
         //Check whether it is the tail of the first edge
         if(this.currentPath.get(0).getTailID().equals(node.getID()))
             return false;

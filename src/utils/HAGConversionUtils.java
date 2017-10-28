@@ -11,8 +11,7 @@ import graphmodels.hypergraph.HyperEdge;
 import graphmodels.hypergraph.HyperGraph;
 import graphmodels.hypergraph.IVulnNode;
 import graphmodels.hypergraph.VulnerabilityNode;
-
-import static utils.Constants.*;
+import main.HAGBuildingMain;
 
 import java.io.File;
 import java.util.Map;
@@ -48,8 +47,12 @@ public class HAGConversionUtils {
 
                 String sourceID = sourceJson.get("node_Ident").asText();
                 String sourceData = sourceJson.get("gainedprivilege").asText();
-                IHostNode ep = new HostNode(sourceID, sourceData);
-                hyperGraph.addEntryPoint(ep);
+                if(!hyperGraph.containsHostNode(sourceID)) {
+                    IHostNode ep = new HostNode(sourceID, sourceData);
+                    hyperGraph.addEntryPoint(ep);
+                }
+                else
+                    System.out.println("### ENTRY POINT ALREADY INSERTED.");
             }
 
             // Add the targets to the hypergraph
@@ -58,14 +61,18 @@ public class HAGConversionUtils {
 
                 String targetID = targetJson.get("node_Ident").asText();
                 String targetData = targetJson.get("gainedprivilege").asText();
-                IHostNode t = new HostNode(targetID, targetData);
-                hyperGraph.addTarget(t);
+                if(!hyperGraph.containsHostNode(targetID)) {
+                    IHostNode t = new HostNode(targetID, targetData);
+                    hyperGraph.addTarget(t);
+                }
+                else
+                    System.out.println("### TARGET ALREADY INSERTED.");
             }
 
             // Add the edges and the vulnerabilities to the hypergraph.
             // Since vulnerabilities are not stored into this graph, we need to extract them from the edges.
             // We also load the map of CVSS scores in order to store it into the VulnerabilityNode objects.
-            Map<String, String> cveMap = JacksonCVEUtils.loadCVEJson(CVE_DATA_FILENAME);
+            Map<String, String> cveMap = JacksonACUtils.loadCVEJson("access-complexity-data.json");
 
             JsonNode edgesArray = graphJson.get("attackPathEdges");
             for(JsonNode edgeJson : edgesArray){
@@ -76,16 +83,24 @@ public class HAGConversionUtils {
                 String tailID = tailJson.get("node_Ident").asText();
                 JsonNode tailPLJson = tailJson.get("gainedprivilege");
                 String tailData = tailPLJson.get("level").asText();
-                IHostNode t = new HostNode(tailID, tailData);
-                hyperGraph.addHostNode(t);
+
+                // Add it to the graph if we've not met it so far
+                if(!hyperGraph.containsHostNode(tailID))
+                    hyperGraph.addHostNode(new HostNode(tailID, tailData));
+                else
+                    System.out.println("HAGConversionUtils: node already created.");
 
                 // Extract the head
                 JsonNode headJson = edgeJson.get("head");
                 String headID = headJson.get("node_Ident").asText();
                 JsonNode headPLJson = headJson.get("gainedprivilege");
                 String headData = headPLJson.get("level").asText();
-                IHostNode h = new HostNode(headID, headData);
-                hyperGraph.addHostNode(h);
+
+                // Add it to the graph if we've not met it so far
+                if(!hyperGraph.containsHostNode(headID))
+                    hyperGraph.addHostNode(new HostNode(headID, headData));
+                else
+                    System.out.println("HAGConversionUtils: node already created.");
 
                 // Extract all the vulnerabilities and add the edges to the graph
                 JsonNode vulnListJson = edgeJson.get("attackPathNodeVulnerabilityList");
@@ -95,8 +110,8 @@ public class HAGConversionUtils {
                     String vulnData = vulnDataJson.get("name").asText();
                     // Get CVSS score
                     String cvssScore = cveMap.get(vulnID);
-                    //TODO check this out
-                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData, cvssScore, "");
+
+                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData, cvssScore, cveMap.get(vulnID));
                     hyperGraph.addVulnNode(vulnNode);
 
                     /* PROBLEM: since we can create more than one hyperedge from a single edge,

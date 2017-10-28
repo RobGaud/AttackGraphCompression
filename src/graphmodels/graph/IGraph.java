@@ -25,6 +25,7 @@ public interface IGraph {
     void removeHostNode(String nID);
     IHostNode getNode(String nID);
     Map<String, IHostNode> getHostNodes();
+    boolean containsHostNode(String nodeID);
 
     /*** EDGES MANIPULATION METHODS ***/
     void addEdge(IEdge edge);

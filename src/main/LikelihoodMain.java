@@ -21,9 +21,10 @@ public class LikelihoodMain {
     public static void main(String[] args){
         String dataFolderPath = Constants.getDataHome();
         String attackGraphName = "HAG_attack_graph";
+        int pathLength = Constants.MAX_PATH_LENGTH;
 
         String attackGraphFile = attackGraphName + ".json";
-        String attackPathsFile = attackGraphName + "_paths.json";
+        String attackPathsFile = attackGraphName + "_paths_" + pathLength + ".json";
         String subgraphsFile   = attackGraphName + "_subgraphs.json";
 
         //Load hypergraph

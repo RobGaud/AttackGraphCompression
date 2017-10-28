@@ -19,7 +19,7 @@ public class AttackPathsMain {
         String attackGraphName = "HAG_attack_graph";
 
         String attackGraphFile = attackGraphName + ".json";
-        String attackPathsFile = attackGraphName + "_paths.json";
+        String attackPathsFile = attackGraphName + "_paths_" + Constants.MAX_PATH_LENGTH + ".json";
 
         //Load hypergraph
         IHyperGraph graph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, attackGraphFile);
@@ -29,6 +29,7 @@ public class AttackPathsMain {
         Collection<IAttackPath> paths = pathComputer.computePaths();
 
         //Store them in a json file
+        System.out.println("# Storing attack paths in file " + attackGraphFile);
         JacksonPathUtils.storePaths(attackGraphName, paths, dataFolderPath, attackPathsFile);
     }
 }
