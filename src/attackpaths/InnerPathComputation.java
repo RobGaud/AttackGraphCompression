@@ -11,10 +11,10 @@ import java.util.*;
  */
 public class InnerPathComputation {
 
-    public static Set<LinkedList<IEdge>> execute(ISCCNode sccNode, String from, String to){
+    public static Set<LinkedList<IEdge>> execute(ISCCNode sccNode, String from, String to, int maxInnerPathLength){
         Set<String> currentPathNodes = new HashSet<>();
         currentPathNodes.add(from);
-        return computeInnerPaths(sccNode, from, to, Constants.MAX_INNER_PATH_LENGTH, currentPathNodes);
+        return computeInnerPaths(sccNode, from, to, maxInnerPathLength, currentPathNodes);
     }
 
     private static Set<LinkedList<IEdge>> computeInnerPaths(ISCCNode sccNode, String currentNode, String target, int spareLength, Set<String> pathNodes){

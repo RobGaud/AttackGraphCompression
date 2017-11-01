@@ -28,7 +28,7 @@ public class HAGJacksonUtils {
      * @param graph: the HyperGraph object to be stored into the Json file.
      * @param filename: the name of the Json file that will contain the HyperGraph object.
      */
-    public static void saveHAG(HyperGraph graph, String dataFolderPath, String filename) {
+    public static void storeHAG(HyperGraph graph, String dataFolderPath, String filename) {
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode graphJson = mapper.createObjectNode();
@@ -77,6 +77,7 @@ public class HAGJacksonUtils {
             vulnJson.put("node_Ident", vuln.getID());
             vulnJson.put("node_Data", vuln.getData());
             vulnJson.put("cvss_score", vuln.getCVSS());
+            vulnJson.put("access_Complexity", vuln.getComplexityScore());
             vulnArray.add(vulnJson);
         }
         graphJson.putPOJO("vulnerabilities", vulnArray);
@@ -173,7 +174,9 @@ public class HAGJacksonUtils {
                     String vID = nJson.get("node_Ident").asText();
                     String vData = nJson.get("node_Data").asText();
                     String cvssScore = nJson.get("cvss_score").asText();
-                    IVulnNode v = new VulnerabilityNode(vID, vData, cvssScore);
+                    String accessComplexity = nJson.get("access_Complexity").asText();
+
+                    IVulnNode v = new VulnerabilityNode(vID, vData, cvssScore, accessComplexity);
                     hyperGraph.addVulnNode(v);
                 }
             }

@@ -17,7 +17,33 @@ import static utils.Constants.*;
 /**
  * Created by Roberto Gaudenzi on 30/09/17.
  */
-public class JacksonCVEUtils {
+public class JacksonCVSSUtils {
+
+    public static Map<String, String> loadCVSSMap(String filename){
+        String cveDataFolder = Constants.getCveDataHome();
+        Map<String, String> cveMap = new HashMap<>();
+        try{
+            JsonFactory jsonFactory = new JsonFactory();
+            JsonParser jp = jsonFactory.createParser(new File(cveDataFolder + filename));
+            jp.setCodec(new ObjectMapper());
+            JsonNode json = jp.readValueAsTree();
+
+            JsonNode cveListObject = json.get("cve-cvss");
+            if(cveListObject.isArray()){
+                for(JsonNode pairObject : cveListObject){
+                    String cve = pairObject.get("cve").asText();
+                    String cvss = pairObject.get("cvss").asText();
+                    cveMap.put(cve, cvss);
+                }
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return cveMap;
+    }
+
+    /** METHODS TO BUILD AND STORE THE MAP IN A JSON FILE **/
 
     private static Map<String, String> extractCVEDataListFromFile(String dataFolderPath, String filename){
         // Create an empty map
@@ -65,46 +91,21 @@ public class JacksonCVEUtils {
         return cveData;
     }
 
-    public static Map<String, String> loadCVEJson(String filename){
-        String cveDataFolder = Constants.getCveDataHome();
-        Map<String, String> cveMap = new HashMap<>();
-        try{
-            JsonFactory jsonFactory = new JsonFactory();
-            JsonParser jp = jsonFactory.createParser(new File(cveDataFolder + filename));
-            jp.setCodec(new ObjectMapper());
-            JsonNode json = jp.readValueAsTree();
-
-            JsonNode cveListObject = json.get("cve-cvss");
-            if(cveListObject.isArray()){
-                for(JsonNode pairObject : cveListObject){
-                    String cve = pairObject.get("cve").asText();
-                    String cvss = pairObject.get("cvss").asText();
-                    cveMap.put(cve, cvss);
-                }
-            }
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        return cveMap;
-    }
-
     public static void main(String[] args){
-        //String[] filenames = {"cve-2001.json", "cve-2003.json", "cve-2004.json", "cve-2005.json",
-        //                      "cve-2006.json", "cve-2007.json", "cve-2008.json", "cve-2009.json"};
-        String[] filenames = {"cve-2004.json"};
+        String[] filenames = {"nvdcve-1.0-2002.json", "nvdcve-1.0-2003.json", "nvdcve-1.0-2004.json", "nvdcve-1.0-2005.json",
+                              "nvdcve-1.0-2006.json", "nvdcve-1.0-2007.json", "nvdcve-1.0-2008.json", "nvdcve-1.0-2009.json"};
 
         String cveDataFolderPath = Constants.getIdeaHome() + PROJECT_HOME + DATA_HOME + CVE_DATA_HOME;
-        String cveDataFilename = "cve-data.json";
+        String cveDataFilename = "cvss-data.json";
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode cvesJson = mapper.createObjectNode();
 
+        ArrayNode cveListJson = mapper.createArrayNode();
         // For each file, call extractCVEDataFromFile
         for(String filename : filenames){
-            ArrayNode cveListJson = mapper.createArrayNode();
-            Map<String, String> cveMap = extractCVEDataListFromFile(cveDataFolderPath, filename);
             // Add all the entries to the JsonNode
+            Map<String, String> cveMap = extractCVEDataListFromFile(cveDataFolderPath, filename);
             for(Map.Entry<String, String> cve : cveMap.entrySet()){
                 ObjectNode cveJson = mapper.createObjectNode();
                 cveJson.put("cve", cve.getKey());

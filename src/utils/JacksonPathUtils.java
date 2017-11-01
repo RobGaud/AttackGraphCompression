@@ -8,12 +8,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import graphmodels.graph.AttackEdge;
-import graphmodels.graph.Edge;
+
 import graphmodels.graph.IAttackEdge;
 import graphmodels.graph.IEdge;
 import graphmodels.graph.sccmodels.ISCCAttackEdge;
-import graphmodels.hypergraph.HyperEdge;
+
 import graphmodels.hypergraph.IHyperEdge;
 import graphmodels.hypergraph.sccmodels.ISCCHyperEdge;
 
@@ -132,7 +131,7 @@ public class JacksonPathUtils {
     }
 
     /** METHOD FOR LOADING SINGLE PATH **/
-    static IAttackPath loadAttackPath(JsonNode pathJson, Map<String, IEdge> edgesMap){
+    private static IAttackPath loadAttackPath(JsonNode pathJson, Map<String, IEdge> edgesMap){
         String pathID = pathJson.get("path_Ident").asText();
         float likelihood = (float)pathJson.get("likelihood").asDouble();
         IAttackPath path = new AttackPath(pathID, likelihood);
@@ -152,7 +151,7 @@ public class JacksonPathUtils {
     }
 
     /** METHOD FOR STORING SINGLE PATH **/
-    static ObjectNode storeAttackPath(ObjectMapper mapper, IAttackPath path) {
+    private static ObjectNode storeAttackPath(ObjectMapper mapper, IAttackPath path) {
         ObjectNode pathJson = mapper.createObjectNode();
         pathJson.put("path_Ident", path.getID());
         pathJson.put("likelihood", path.getLikelihood());
@@ -173,7 +172,7 @@ public class JacksonPathUtils {
         return pathJson;
     }
 
-    static Collection<IEdge> getEdgesFromPath(IAttackPath path){
+    private static Collection<IEdge> getEdgesFromPath(IAttackPath path){
         return path.getEdges().values();
     }
 }

@@ -11,7 +11,6 @@ import graphmodels.hypergraph.HyperEdge;
 import graphmodels.hypergraph.HyperGraph;
 import graphmodels.hypergraph.IVulnNode;
 import graphmodels.hypergraph.VulnerabilityNode;
-import main.HAGBuildingMain;
 
 import java.io.File;
 import java.util.Map;
@@ -72,7 +71,8 @@ public class HAGConversionUtils {
             // Add the edges and the vulnerabilities to the hypergraph.
             // Since vulnerabilities are not stored into this graph, we need to extract them from the edges.
             // We also load the map of CVSS scores in order to store it into the VulnerabilityNode objects.
-            Map<String, String> cveMap = JacksonACUtils.loadCVEJson("access-complexity-data.json");
+            Map<String, String> acMap = JacksonACUtils.loadCVEJson("access-complexity-data.json");
+            Map<String, String> cvssMap = JacksonCVSSUtils.loadCVSSMap("cvss-data.json");
 
             JsonNode edgesArray = graphJson.get("attackPathEdges");
             for(JsonNode edgeJson : edgesArray){
@@ -108,10 +108,10 @@ public class HAGConversionUtils {
                     JsonNode vulnDataJson = vulnJson.get("classification").get(0);
                     String vulnID = vulnDataJson.get("ident").asText();
                     String vulnData = vulnDataJson.get("name").asText();
-                    // Get CVSS score
-                    String cvssScore = cveMap.get(vulnID);
+                    String cvssScore = cvssMap.get(vulnID);
+                    String accessComplexity = acMap.get(vulnID);
 
-                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData, cvssScore, cveMap.get(vulnID));
+                    IVulnNode vulnNode = new VulnerabilityNode(vulnID, vulnData, cvssScore, accessComplexity);
                     hyperGraph.addVulnNode(vulnNode);
 
                     /* PROBLEM: since we can create more than one hyperedge from a single edge,

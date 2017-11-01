@@ -16,7 +16,7 @@ public class AttackPathExtractor {
 
     private static int attackPathGenerator;
 
-    public static Set<IAttackPath> extractPaths(IGraph graph, IAttackPath compressedPath){
+    public static Set<IAttackPath> extractPaths(IGraph graph, IAttackPath compressedPath, int maxInnerPathLength){
         attackPathGenerator = 0;
 
         Set<IAttackPath> extractedPaths = new HashSet<>();
@@ -38,7 +38,7 @@ public class AttackPathExtractor {
                 ISCCEdge nextEdge = (ISCCEdge)compressedPath.getEdge(currentRank+1);
                 String h1 = ((ISCCEdge)currentEdge).getInnerHead();
                 String t2 = nextEdge.getInnerTail();
-                Set<LinkedList<IEdge>> innerPaths = InnerPathComputation.execute((ISCCNode)currentHead, h1, t2);
+                Set<LinkedList<IEdge>> innerPaths = InnerPathComputation.execute((ISCCNode)currentHead, h1, t2, maxInnerPathLength);
 
                 // Add the innerPaths to each extractedPath
                 partialPath.addLast(convertSCCEdge(currentEdge));
@@ -77,6 +77,7 @@ public class AttackPathExtractor {
     }
 
     private static Set<LinkedList<IEdge>> combinePaths(Set<LinkedList<IEdge>> rawPaths, LinkedList<IEdge> intermediatePath, Set<LinkedList<IEdge>> innerPaths){
+
         Set<LinkedList<IEdge>> combinedPaths = new HashSet<>();
 
         for (LinkedList<IEdge> rawPath : rawPaths) {

@@ -15,7 +15,7 @@ public class Constants {
     public static final String DATA_HOME = "data/";
     public static final String CVE_DATA_HOME = "cvedata/";
 
-    public static final String CVE_DATA_FILENAME = "cve-data.json";
+    public static final String CVE_DATA_FILENAME = "cvss-data.json";
 
     // Constants for Graph Compression
     public static final int MIN_SCC_SIZE = 4;
@@ -71,7 +71,17 @@ public class Constants {
 
     public static final float EPSILON = 0.50f;
 
-    public static final int MAX_PATH_LENGTH = 4;
+    public static final int[] MAX_PATH_LENGTHS = {4, 5, 6, 7, 8};
 
-    public static final int MAX_INNER_PATH_LENGTH = 4;
+    public static final int[] MAX_INNER_PATH_LENGTHS = {2, 3, 4};
+
+    public static final int MAX_PATHS_PER_FILE = 500000;
+
+    public static String getPathsFileName(String graphName, int pathsLength){
+        return graphName + "_paths_" + pathsLength + ".json";
+    }
+
+    public static String getPathsBigSetFileName(String graphName, int pathsLength, int fileNumber){
+        return graphName + "_paths_" + pathsLength + "_" + fileNumber + ".json";
+    }
 }
