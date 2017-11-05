@@ -15,10 +15,9 @@ public class Constants {
     public static final String DATA_HOME = "data/";
     public static final String CVE_DATA_HOME = "cvedata/";
 
-    public static final String CVE_DATA_FILENAME = "cvss-data.json";
-
     // Constants for Graph Compression
     public static final int MIN_SCC_SIZE = 4;
+    public static final int[] MAX_SCC_SIZES = {5, 7, 9, 15};
     public static final String SCC_NODE_ID_PREFIX = "SCC_NODE_";
     public static final String SCC_EDGE_ID_PREFIX = "SCC_EDGE_";
 

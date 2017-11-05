@@ -176,25 +176,21 @@ public class JacksonHAGUtils {
 
         // Create the Json containing all the edges in the graph.
         ArrayNode edgesArray = mapper.createArrayNode();
-        System.out.println(nodes.values());
         for(IHostNode node : nodes.values()) {
-            System.out.println(node.getID()+": "+node.getOutboundEdges());
             for(IEdge outEdge : node.getOutboundEdges()){
                 ObjectNode edgeJson;
                 if(ISCCAttackEdge.isSCCAttackEdge(outEdge)){
-                    System.out.println("JacksonHAGUtils.storeHAG/addingEdges/" + node.getID() + "/Storing scc attack edge.");
+                    System.out.println("JacksonHAGUtils.storeGraph: creating sccAttackEdge.");
                     edgeJson = JacksonEdgeUtils.storeSCCAttackEdge(mapper, (ISCCAttackEdge)outEdge);
                 }
                 else if(ISCCHyperEdge.isSCCHyperEdge(outEdge)){
-                    System.out.println("JacksonHAGUtils.storeHAG/addingEdges/" + node.getID() + "/Storing scc hyper edge.");
-                    edgeJson = JacksonEdgeUtils.storeHyperEdge(mapper, (ISCCHyperEdge)outEdge);
+                    System.out.println("JacksonHAGUtils.storeGraph: creating sccHyperEdge.");
+                    edgeJson = JacksonEdgeUtils.storeSCCHyperEdge(mapper, (ISCCHyperEdge)outEdge);
                 }
                 else if(IAttackEdge.isAttackEdge(outEdge)){
-                    System.out.println("JacksonHAGUtils.storeHAG/addingEdges/" + node.getID() + "/Storing attack edge.");
                     edgeJson = JacksonEdgeUtils.storeAttackEdge(mapper, (IAttackEdge)outEdge);
                 }
                 else{
-                    System.out.println("JacksonHAGUtils.storeHAG/addingEdges/" + node.getID() + "/Storing hyper edge.");
                     edgeJson = JacksonEdgeUtils.storeHyperEdge(mapper, (IHyperEdge)outEdge);
                 }
 

@@ -28,13 +28,32 @@ public class SCCHyperEdge extends HyperEdge implements ISCCHyperEdge{
     }
 
     @Override
-    public int hashCode(){ return super.hashCode() + this.innerTailID.hashCode() + this.innerHeadID.hashCode(); }
+    public int hashCode(){
+        int hashCode = super.hashCode();
+        if(this.innerTailID != null)
+            hashCode += this.innerTailID.hashCode();
+        if(this.innerHeadID != null)
+            hashCode += this.innerHeadID.hashCode();
+
+        return hashCode;
+    }
 
     @Override
     public boolean equals(Object o){
         if(this.getClass().equals(o.getClass()) && super.equals(o)){
             SCCHyperEdge edge = (SCCHyperEdge)o;
-            return this.innerTailID.equals(edge.innerTailID) && this.innerHeadID.equals(edge.innerHeadID);
+            boolean areEqual;
+            if(this.innerTailID != null)
+                areEqual = this.innerTailID.equals(edge.innerTailID);
+            else
+                areEqual = edge.innerTailID == null;
+
+            if(this.innerHeadID != null)
+                areEqual = areEqual && this.innerHeadID.equals(edge.innerHeadID);
+            else
+                areEqual = areEqual && edge.innerHeadID == null;
+
+            return areEqual;
         }
         else return false;
     }

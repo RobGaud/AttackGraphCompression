@@ -30,11 +30,13 @@ public class Graph implements IGraph {
 
     @Override
     public void removeHostNode(String nID) {
-        for(IEdge InEdge : this.nodes.get(nID).getInboundEdges())
-            this.removeEdge(InEdge);
+        for(IEdge inEdge : this.nodes.get(nID).getInboundEdges()){
+            this.removeEdge(inEdge);
+        }
 
-        for(IEdge outEdge : this.nodes.get(nID).getOutboundEdges())
+        for(IEdge outEdge : this.nodes.get(nID).getOutboundEdges()){
             this.removeEdge(outEdge);
+        }
 
         this.nodes.remove(nID);
     }

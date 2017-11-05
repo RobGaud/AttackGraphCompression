@@ -31,12 +31,14 @@ public class KosarajuSCCFinder implements ISCCFinder {
 
     @Override
     public Map<String, Collection<IHostNode>> findSCCs(IHostNode startPoint) {
-        // TODO
+        reset();
+
         String spID = startPoint.getID();
 
         // We don't want to include entry points and target in the clustering process.
-        if(graph.isEntryPoint(spID) || graph.isTarget(spID))
+        if(graph.isEntryPoint(spID) || graph.isTarget(spID) || ISCCNode.isSCCNode(startPoint)){
             return null;
+        }
 
         // Perform the first DFS required by the Kosaraju's algorithm.
         firstDfs(startPoint);
@@ -45,8 +47,7 @@ public class KosarajuSCCFinder implements ISCCFinder {
         secondDfs();
 
         // Build lists of SCCs and return it.
-        Map<String, Collection<IHostNode>> sccMap = getSCCs();
-        return sccMap;
+        return getSCCs();
     }
 
     private void firstDfs(IHostNode startPoint){
@@ -56,6 +57,7 @@ public class KosarajuSCCFinder implements ISCCFinder {
 
     private void firstDfsAux(IHostNode nodeToVisit){
         String nodeID = nodeToVisit.getID();
+
         if(visitOrder.contains(nodeID) || nodesInPath.contains(nodeID))
             return;
 
@@ -64,12 +66,13 @@ public class KosarajuSCCFinder implements ISCCFinder {
         // Iterate on out-neighbors
         for(IEdge outEdge : nodeToVisit.getOutboundEdges()){
             String nextNodeID = outEdge.getHeadID();
-            this.graph.getNode(nextNodeID);
 
-            // Again, we don't want to include entry points and target in the clustering process,
-            // and we don't want to visit again already closed nodes either.
-            if(!graph.isEntryPoint(nextNodeID) && !graph.isTarget(nextNodeID) && !visitOrder.contains(nextNodeID)){
-                firstDfsAux(nodeToVisit);
+            if(this.graph.getNode(nextNodeID) != null){
+                // Again, we don't want to include entry points and target in the clustering process,
+                // and we don't want to visit again already closed nodes either.
+                if(!graph.isEntryPoint(nextNodeID) && !graph.isTarget(nextNodeID) && !visitOrder.contains(nextNodeID)){
+                    firstDfsAux(nodeToVisit);
+                }
             }
         }
 
@@ -84,19 +87,20 @@ public class KosarajuSCCFinder implements ISCCFinder {
     private void secondDfs(){
         while(!this.visitOrder.isEmpty()){
             String currentNodeID = this.visitOrder.pop();
-            if(!this.parentsMap.containsKey(currentNodeID))
+
+            if(!this.parentsMap.containsKey(currentNodeID) && this.graph.getNode(currentNodeID) != null)
                 secondDfsAux(currentNodeID, currentNodeID);
+
         }
     }
 
     private void secondDfsAux(String nodeID, String root){
         this.parentsMap.put(nodeID, root);
         // Iterate on in-neighbors
-        for(IEdge inEdge : graph.getHostNodes().get(nodeID).getInboundEdges()){
+        for(IEdge inEdge : graph.getNode(nodeID).getInboundEdges()){
             String inNeighborID = inEdge.getTailID();
 
-            IHostNode inNeighbor = graph.getHostNodes().get(inNeighborID);
-
+            IHostNode inNeighbor = graph.getNode(inNeighborID);
 
             if(isCompressible(inNeighbor)){
                 secondDfsAux(inNeighborID, root);
@@ -110,34 +114,40 @@ public class KosarajuSCCFinder implements ISCCFinder {
          * 2) target nodes in the attack graph;
          * 3) SCCNodes;
          */
+        //TODO find a better solution
+        if(node == null){
+            System.out.println("KosarajuSCCFinder.isCompressible: trying to walk on a removed node during second Dfs.");
+            return false;
+        }
+
         boolean alreadyInSCC = parentsMap.containsKey(node.getID());
         boolean isEntryPoint = graph.isEntryPoint(node.getID());
         boolean isTarget = graph.isTarget(node.getID());
 
-        Class[] interfaces = node.getClass().getInterfaces();
-        boolean isSCCNode = false;
-        for(Class i : interfaces){
-            if(i.equals(ISCCNode.class))
-                isSCCNode = true;
-        }
+        boolean isSCCNode = ISCCNode.isSCCNode(node);
         return !alreadyInSCC && !isEntryPoint && !isTarget && !isSCCNode;
     }
 
     private Map<String, Collection<IHostNode>> getSCCs(){
-
         Map<String, Collection<IHostNode>> sccMap = new HashMap<>();
         for(String nodeID : this.parentsMap.keySet()){
             String parentID = this.parentsMap.get(nodeID);
-            IHostNode node = graph.getHostNodes().get(nodeID);
+            IHostNode node = graph.getNode(nodeID);
+            if(node != null){
+                // If this is the first time we touch the SCC related to parentID, then create it.
+                if(!sccMap.containsKey(parentID))
+                    sccMap.put(parentID, new LinkedList<>());
 
-            // If this is the first time we touch the SCC related to parentID, then create it.
-            if(!sccMap.containsKey(parentID))
-                sccMap.put(parentID, new LinkedList<>());
-
-            // In both cases, add the node to the SCC
-            sccMap.get(parentID).add(node);
+                // In both cases, add the node to the SCC
+                sccMap.get(parentID).add(node);
+            }
         }
 
         return sccMap;
+    }
+
+    private void reset(){
+        this.visitOrder = new Stack<>();
+        this.parentsMap = new HashMap<>();
     }
 }

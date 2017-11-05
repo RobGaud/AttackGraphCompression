@@ -6,6 +6,7 @@ import graphmodels.graph.IHostNode;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -74,6 +75,9 @@ public class SCCNode extends HostNode implements ISCCNode{
 
     @Override
     public void addInnerEdge(IEdge edge) {
+        if(!this.innerEdges.containsKey(edge.getTailID())){
+            this.innerEdges.put(edge.getTailID(), new HashSet<>());
+        }
         this.innerEdges.get(edge.getTailID()).add(edge);
     }
 

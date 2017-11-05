@@ -48,20 +48,18 @@ public class HostNode implements IHostNode {
 
     @Override
     public void removeInboundEdge(IEdge inEdge) {
-        this.inboundEdgesMap.get(inEdge.getTailID()).remove(inEdge);
+        boolean removed = this.inboundEdgesMap.get(inEdge.getTailID()).remove(inEdge);
+        if(!removed)
+            System.err.println("HostNode.removeInboundEdge: edge " + inEdge.getID() + " not found!");
     }
 
     @Override
     public Collection<IEdge> getInboundEdges() {
-        //System.out.println("getinbound called" + this.id);
-        //System.out.println(this.id + " mapEdges=" + this.inboundEdgesMap);
 
         Collection<Collection<IEdge>> edgeLists = this.inboundEdgesMap.values();
-        //System.out.println(this.id + " edgeLists=" + edgeLists);
         Collection<IEdge> inboundEdges = new LinkedList<>();
         for(Collection<IEdge> c : edgeLists){
             inboundEdges.addAll(c);
-            //System.out.println("Collection" + inboundEdges);
         }
         return inboundEdges;
     }
@@ -88,7 +86,9 @@ public class HostNode implements IHostNode {
 
     @Override
     public void removeOutboundEdge(IEdge outEdge) {
-        this.outboundEdgesMap.get(outEdge.getHeadID()).remove(outEdge);
+        boolean removed = this.outboundEdgesMap.get(outEdge.getHeadID()).remove(outEdge);
+        if(!removed)
+            System.err.println("HostNode.removeOutboundEdge: edge " + outEdge.getID() + " not found!");
     }
 
     @Override
