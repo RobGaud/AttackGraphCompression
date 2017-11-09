@@ -14,8 +14,8 @@ import java.util.Map;
  */
 public class ComputeExitRates {
 
-    public static Float[] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix){
-        Float[] exitRates = new Float[indicesMatrix.values().size()];
+    public static double[] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix){
+        double[] exitRates = new double[indicesMatrix.values().size()];
 
         for(int nodeIndex : indicesMatrix.keySet()){
             IHostNode node = graph.getNode(indicesMatrix.get(nodeIndex));
@@ -26,17 +26,17 @@ public class ComputeExitRates {
         return exitRates;
     }
 
-    private static float getExitRate(IHyperGraph graph, IHostNode node){
-        float exitRate = 1;
-        for(IEdge inEdge : node.getInboundEdges()){
-            String vulnID = ((IHyperEdge)inEdge).getVulnNodeID();
+    private static double getExitRate(IHyperGraph graph, IHostNode node){
+        double sk = 1.0;
+        // for(IEdge inEdge : node.getInboundEdges()){
+        for(IEdge outEdge : node.getOutboundEdges()){
+            String vulnID = ((IHyperEdge)outEdge).getVulnNodeID();
             IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
             float vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
-            if(vulnComplexity < exitRate){
-                exitRate = vulnComplexity;
+            if(vulnComplexity < sk){
+                sk = vulnComplexity;
             }
         }
-
-        return exitRate;
+        return sk/2;
     }
 }

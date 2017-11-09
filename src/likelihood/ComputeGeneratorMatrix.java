@@ -5,11 +5,12 @@ package likelihood;
  */
 public class ComputeGeneratorMatrix {
 
-    public static Float[][] execute(Float[] exitRates, Float[][] transProb){
-        int n = exitRates.length;
-        Float[][] genMatrix = new Float[n][n];
+    public static double[][] execute(double[] exitRates, double[][] transProb){
 
-        Float[][] IminusP = new Float[n][n];
+        int n = exitRates.length;
+        double[][] genMatrix = new double[n][n];
+
+        Double[][] IminusP = new Double[n][n];
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
                 if(i == j)
@@ -21,9 +22,11 @@ public class ComputeGeneratorMatrix {
 
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
+                genMatrix[i][j] = 0.0f;
                 for(int k = 0; k < n; k++){
-                    if(i == k)
-                        genMatrix[i][j] += -1 * exitRates[i] * IminusP[k][j];
+                    if(i == k) {
+                        genMatrix[i][j] += -1 * exitRates[k] * IminusP[k][j];
+                    }
                     // Else, exitRates[i][k] is zero and therefore the product is zero => NOTHING TO ADD
                 }
             }

@@ -3,8 +3,13 @@ package likelihood;
 import attackpaths.IAttackPath;
 import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.IHyperGraph;
+
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+
 import utils.Constants;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -16,49 +21,62 @@ public class ComputePathsMTAO {
 
     private static Map<Integer, String> nodesIndices;
 
-    public static Map<String, Float> execute(IHyperGraph graph, Set<IHostNode> subgraph, Set<IAttackPath> paths, IHostNode targetNode){
+    public static Map<String, Double> execute(IHyperGraph graph, Set<IHostNode> subgraph, Collection<IAttackPath> paths, IHostNode targetNode){
 
-        Map<String, Float> mtaoMap = new HashMap<>();
+        Map<String, Double> mtaoMap = new HashMap<>();
 
         assignIndices(targetNode, subgraph);
-        Float[][] P = ComputeTransitionProb.execute(graph, targetNode, nodesIndices, Constants.EPSILON);
-        Float[] exitRates = ComputeExitRates.execute(graph, nodesIndices);
-        Float[][] A = ComputeGeneratorMatrix.execute(exitRates, P);
+        double[][] P = ComputeTransitionProb.execute(graph, nodesIndices, Constants.EPSILON);
+        double[] exitRates = ComputeExitRates.execute(graph, nodesIndices);
+        double[][] A = ComputeGeneratorMatrix.execute(exitRates, P);
+        double[][] inverted_A_u = computeInvertedMatrix(A);
 
         for(IAttackPath path : paths){
-            Float[] S = ComputeStateVector.execute(path, nodesIndices);
+            double[] S = ComputeStateVector.execute(path, nodesIndices);
 
-            mtaoMap.put(path.getID(), computeMTAO(A, S));
+            mtaoMap.put(path.getID(), computeMTAO(inverted_A_u, S));
         }
 
         return mtaoMap;
     }
 
-    private static float computeMTAO(Float[][] A, Float[] S){
-        int n = A.length;
+    private static double computeMTAO(double[][] inverted_A_u, double[] S){
+        int length = inverted_A_u.length;
 
-        // First, compute the product of S and A_u
-        Float[] temp = new Float[n-1];
-        for(int j = 0; j < n-1; j++){
-            for(int k = 0; k < n-1; k++){
-                temp[j] += S[k] * A[k][j];
+        // First, compute the product of -S and (A_u)^-1
+        double[] temp = new double[length];
+        for(int j = 0; j < length; j++){
+            temp[j] = 0.0f;
+            for(int k = 0; k < length; k++){
+                temp[j] += -1 * S[k] * inverted_A_u[j][k];
             }
         }
 
         // Then, compute the product of the result vector and the 1s vector
-        float mtao = 0;
-        for(int i = 0; i < n-1; i++){
+        double mtao = 0.0;
+        for(int i = 0; i < length; i++){
             mtao += temp[i];
         }
 
         return mtao;
     }
 
+    private static double[][] computeInvertedMatrix(double[][] A){
+        double[][] A_u = new double[A.length-1][A[0].length-1];
+        for(int i = 0; i < A_u.length; i++){
+            for(int j = 0; j < A_u[0].length; j++){
+                A_u[i][j] = A[i][j];
+            }
+        }
+
+        RealMatrix invertRmA = MatrixUtils.inverse(MatrixUtils.createRealMatrix(A_u));
+        return invertRmA.getData();
+    }
 
     private static void assignIndices(IHostNode target, Set<IHostNode> subgraph){
         nodesIndices = new HashMap<>();
         // Assign index 'n' to the target
-        nodesIndices.put(subgraph.size(), target.getID());
+        nodesIndices.put(subgraph.size()-1, target.getID());
         int i = 0;
         for(IHostNode node : subgraph){
             if(!node.equals(target)){

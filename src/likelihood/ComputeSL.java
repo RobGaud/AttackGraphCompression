@@ -4,42 +4,51 @@ import attackpaths.IAttackPath;
 import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.IHyperGraph;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Roberto Gaudenzi on 15/10/17.
  */
 public class ComputeSL {
 
-    public static Map<String, Float> execute(IHyperGraph graph, Set<IHostNode> subgraph, Set<IAttackPath> paths, IHostNode targetNode){
+    public static Map<String, Double> execute(IHyperGraph graph, Set<IHostNode> subgraph, Collection<IAttackPath> paths, IHostNode targetNode){
 
-        Map<String, Float> mtaoMap = ComputePathsMTAO.execute(graph, subgraph, paths, targetNode);
+        Map<String, Double> mtaoMap = ComputePathsMTAO.execute(graph, subgraph, paths, targetNode);
 
-        float mtaoMin = getMTAOMin((Float[])mtaoMap.values().toArray());
+        double mtaoMin = getMTAOMin(mtaoMap.values());
 
-        Map<String, Float> slMap = new HashMap<>();
+        Map<String, Double> slMap = new HashMap<>();
 
+        int infCount = 0;
         for(String pathID : mtaoMap.keySet()){
-            float pathMTAO = mtaoMap.get(pathID);
-            slMap.put(pathID, computeSL(pathMTAO, mtaoMin));
+            double pathMTAO = mtaoMap.get(pathID);
+            double sl = computeSL(pathMTAO, mtaoMin);
+            if(Double.isInfinite(sl))
+                infCount++;
+            slMap.put(pathID, sl);
         }
+
+        System.out.println("InfCount = " + infCount);
 
         return slMap;
     }
 
-    private static float computeSL(float pathMTAO, float mtaoMin){
-        return -20 * ((pathMTAO - mtaoMin)/pathMTAO);
+    private static double computeSL(double pathMTAO, double mtaoMin){
+        double sl = -20 * Math.log10((pathMTAO - mtaoMin)/pathMTAO);
+        return sl;
     }
 
-    private static float getMTAOMin(Float[] mtaoValues){
-        float min = mtaoValues[0];
-        for(float mtao : mtaoValues){
+    private static double getMTAOMin(Collection<Double> mtaoValues){
+        Iterator<Double> it = mtaoValues.iterator();
+
+        double min = it.next();
+        while(it.hasNext()){
+            double mtao = it.next();
             if(mtao < min)
                 min = mtao;
         }
 
+        System.out.println("ComputeSL: minMtao = " + min);
         return min;
     }
 }

@@ -1,10 +1,7 @@
 package graphmodels.graph;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Roberto Gaudenzi on 10/09/17.
@@ -28,6 +25,8 @@ public class HostNode implements IHostNode {
 
     @Override
     public String getData() { return this.data; }
+
+    /** METHODS TO MANAGE INBOUND EDGES **/
 
     @Override
     public void addInboundEdge(IEdge inEdge) {
@@ -66,8 +65,14 @@ public class HostNode implements IHostNode {
 
     @Override
     public Collection<IEdge> getInboundEdgesFrom(IHostNode tail) {
-        return this.inboundEdgesMap.get(tail.getID());
+        Collection<IEdge> result = this.inboundEdgesMap.get(tail.getID());
+        if(result == null)
+            result = new LinkedList<>();
+
+        return result;
     }
+
+    /** METHODS TO MANAGE OUTBOUND EDGES **/
 
     @Override
     public void addOutboundEdge(IEdge outEdge) {
@@ -103,7 +108,14 @@ public class HostNode implements IHostNode {
 
     @Override
     public Collection<IEdge> getOutboundEdgesTo(IHostNode head) {
-        return this.outboundEdgesMap.get(head.getID());
+        if(head == null)
+            System.out.println("Head is null!");
+
+        Collection<IEdge> result = this.outboundEdgesMap.get(head.getID());
+        if(result == null)
+            result = new LinkedList<>();
+
+        return result;
     }
 
     public int hashCode(){ return this.id.hashCode(); }

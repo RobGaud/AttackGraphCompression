@@ -11,10 +11,10 @@ import java.util.Map;
 public class AttackPath implements IAttackPath{
 
     private String id;
-    private float likelihood;
+    private double likelihood;
     private Map<Integer, IEdge> edges;
 
-    public AttackPath(String id, float likelihood){
+    public AttackPath(String id, double likelihood){
         this.id = id;
         this.edges = new HashMap<>();
     }
@@ -30,7 +30,7 @@ public class AttackPath implements IAttackPath{
     @Override
     public String getTargetID(){
         int lastEdgeRank = edges.keySet().size()-1;
-        return  edges.get(lastEdgeRank).getHeadID();
+        return edges.get(lastEdgeRank).getHeadID();
     }
 
     @Override
@@ -77,12 +77,12 @@ public class AttackPath implements IAttackPath{
     }
 
     @Override
-    public float getLikelihood() {
+    public double getLikelihood() {
         return this.likelihood;
     }
 
     @Override
-    public void setLikelihood(float likelihood) {
+    public void setLikelihood(double likelihood) {
         this.likelihood = likelihood;
     }
 

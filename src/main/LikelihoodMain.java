@@ -20,25 +20,31 @@ public class LikelihoodMain {
 
     public static void main(String[] args){
         String dataFolderPath = Constants.getDataHome();
+        String pathsFolderPath = dataFolderPath + "HAG_attack_graph_paths_5/";
+
         String attackGraphName = "HAG_attack_graph";
-        int pathLength = Constants.MAX_PATH_LENGTHS[0];
+        int pathLength = Constants.MAX_PATH_LENGTHS[1];
 
         String attackGraphFile = attackGraphName + ".json";
-        String attackPathsFile = attackGraphName + "_paths_" + pathLength + ".json";
+        String attackPathsFile = attackGraphName + "_paths_" + pathLength + "_0.json";
         String subgraphsFile   = attackGraphName + "_subgraphs.json";
 
         //Load hypergraph
         IHyperGraph graph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, attackGraphFile);
 
         //Load the related pathsMap
-        pathsMap = JacksonPathUtils.loadPaths(dataFolderPath, attackPathsFile);
+        System.out.println("Calling loadPaths().");
+        pathsMap = JacksonPathUtils.loadPaths(pathsFolderPath, attackPathsFile);
 
+        System.out.println("Calling loadSubgraphs().");
         Map<String, Set<IHostNode>> subgraphsMap = JacksonSubgraphUtils.loadSubgraphs(dataFolderPath, subgraphsFile, graph.getHostNodes());
 
-        Map<String, Set<IAttackPath>> pathsByTarget = labelPathsByTarget(pathsMap.values());
+        Map<String, Collection<IAttackPath>> pathsByTarget = labelPathsByTarget(pathsMap.values());
+
         //For each target T, call ComputeSL and obtain the Success Likelihood for all the pathsMap that lead to T itself.
         for(String targetID : pathsByTarget.keySet()){
-            Map<String, Float> pathsSL = ComputeSL.execute(graph, subgraphsMap.get(targetID), pathsByTarget.get(targetID), graph.getNode(targetID));
+
+            Map<String, Double> pathsSL = ComputeSL.execute(graph, subgraphsMap.get(targetID), pathsByTarget.get(targetID), graph.getNode(targetID));
 
             //Store the SL value into the associated path
             setSL(pathsSL);
@@ -48,19 +54,19 @@ public class LikelihoodMain {
         JacksonPathUtils.storePaths(attackGraphName, pathsMap.values(), dataFolderPath, attackPathsFile);
     }
 
-    private static void setSL(Map<String, Float> pathsSL){
+    private static void setSL(Map<String, Double> pathsSL){
         for(String pathID: pathsSL.keySet()){
             pathsMap.get(pathID).setLikelihood(pathsSL.get(pathID));
         }
     }
 
-    private static Map<String, Set<IAttackPath>> labelPathsByTarget(Collection<IAttackPath> paths){
-        Map<String, Set<IAttackPath>> pathsMap = new HashMap<>();
+    private static Map<String, Collection<IAttackPath>> labelPathsByTarget(Collection<IAttackPath> paths){
+        Map<String, Collection<IAttackPath>> pathsMap = new HashMap<>();
 
         for(IAttackPath path : paths){
             String targetID = path.getTargetID();
             if(!pathsMap.keySet().contains(targetID)){
-                pathsMap.put(targetID, new HashSet<>());
+                pathsMap.put(targetID, new LinkedList<>());
             }
             pathsMap.get(path.getTargetID()).add(path);
         }

@@ -21,8 +21,8 @@ public interface IAttackPath {
 
     int getLength();
 
-    float getLikelihood();
-    void setLikelihood(float likelihood);
+    double getLikelihood();
+    void setLikelihood(double likelihood);
 
     int hashCode();
     boolean equals(Object o);

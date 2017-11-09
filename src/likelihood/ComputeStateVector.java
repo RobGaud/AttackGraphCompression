@@ -2,9 +2,7 @@ package likelihood;
 
 import attackpaths.IAttackPath;
 import graphmodels.graph.IEdge;
-import graphmodels.graph.IGraph;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,14 +10,34 @@ import java.util.Map;
  */
 public class ComputeStateVector {
 
-    public static Float[] execute(IAttackPath path, Map<Integer, String> nodesIndices){
+    public static double[] execute(IAttackPath path, Map<Integer, String> nodesIndices){
+
+        double[] stateVector = computeStartVector(path, nodesIndices);
+        //double[] stateVector = computeFullVector(path, nodesIndices);
+
+        return stateVector;
+    }
+
+    private static double[] computeStartVector(IAttackPath path, Map<Integer, String> nodesIndices){
+        int n = nodesIndices.values().size();
+        double s = 1.0;
+
+        double[] stateVector = new double[n-1];
+        IEdge edge = path.getEdges().get(0);
+            String tailID = edge.getTailID();
+            stateVector[getNodeIndex(nodesIndices, tailID)] = s;
+
+        return stateVector;
+    }
+
+    private static double[] computeFullVector(IAttackPath path, Map<Integer, String> nodesIndices){
         int pathLength = path.getLength();
         int n = nodesIndices.values().size();
-        float s = 1 / pathLength;
+        double s = 1.0 / pathLength;
+
         Map<Integer, IEdge> edges = path.getEdges();
 
-        Float[] stateVector = new Float[n-1];
-
+        double[] stateVector = new double[n-1];
         for(int rank : edges.keySet()){
             IEdge edge = edges.get(rank);
             if(rank == 0){
@@ -28,20 +46,22 @@ public class ComputeStateVector {
             }
             if(rank != n){
                 String headID = edge.getHeadID();
-                stateVector[getNodeIndex(nodesIndices, headID)] = s;
+                int index = getNodeIndex(nodesIndices, headID);
+                if(index < n-1)
+                    stateVector[index] = s;
             }
         }
-
         return stateVector;
     }
 
     private static int getNodeIndex(Map<Integer, String> nodesIndices, String nodeID){
         for(int key : nodesIndices.keySet()){
-            if(nodesIndices.get(key).equals(nodeID))
+            if(nodesIndices.get(key).equals(nodeID)) {
                 return key;
+            }
         }
 
-        System.out.println("ERRORE: getNodeIndex did not found nodeID index.");
+        System.out.println("ERROR: getNodeIndex did not found nodeID index.");
         return -1;
     }
 }

@@ -14,7 +14,7 @@ public class BatchPathsMain {
 
         String attackGraphName = "HAG_attack_graph";
 
-        int maxPathLength = Constants.MAX_PATH_LENGTHS[2];
+        int maxPathLength = Constants.MAX_PATH_LENGTHS[1];
 
         String attackGraphFile = attackGraphName + ".json";
         String attackPathsFileRoot = attackGraphName + "_paths_" + maxPathLength;

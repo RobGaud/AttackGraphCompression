@@ -87,17 +87,24 @@ public class JacksonPathUtils {
         finalJson.put("attackGraph_Ident", graphName);
 
         ArrayNode pathsListJson = mapper.createArrayNode();
-        Set<IEdge> edgeSet = new HashSet<>();
+        Map<String, IEdge> edgeMap = new HashMap<>();
         for(IAttackPath path : paths){
             ObjectNode pathJson = storeAttackPath(mapper, path);
-            edgeSet.addAll(getEdgesFromPath(path));
+
+            Collection<IEdge> pathEdges = getEdgesFromPath(path);
+            for(IEdge edge : pathEdges){
+                if(!edgeMap.containsKey(edge.getID())){
+                    edgeMap.put(edge.getID(), edge);
+                }
+            }
+
             pathsListJson.add(pathJson);
         }
         finalJson.putPOJO("paths", pathsListJson);
 
 
         ArrayNode edgeListJson = mapper.createArrayNode();
-        for(IEdge edge : edgeSet){
+        for(IEdge edge : edgeMap.values()){
             ObjectNode edgeJson;
             if(ISCCAttackEdge.isSCCAttackEdge(edge)){
                 edgeJson = JacksonEdgeUtils.storeSCCAttackEdge(mapper, (ISCCAttackEdge)edge);
@@ -136,12 +143,12 @@ public class JacksonPathUtils {
         float likelihood = (float)pathJson.get("likelihood").asDouble();
         IAttackPath path = new AttackPath(pathID, likelihood);
 
-        JsonNode pathEdgesJson = pathJson.get("path_Edges");
+        JsonNode pathEdgesJson = pathJson.get("path_edges");
         if(pathEdgesJson.isArray()){
             for(JsonNode edgeJson : pathEdgesJson){
                 int rank = Integer.parseInt(edgeJson.get("rank").asText());
 
-                String edgeID = edgeJson.get("edge_Ident").asText();
+                String edgeID = edgeJson.get("edgeID").asText();
                 IEdge pathEdge = edgesMap.get(edgeID);
                 path.addEdge(rank, pathEdge);
             }

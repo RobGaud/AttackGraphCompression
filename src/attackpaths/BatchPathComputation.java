@@ -72,7 +72,7 @@ public class BatchPathComputation{
                 IHostNode neighbor = graph.getNode(edge.getHeadID());
 
                 if(this.checkIfNewNode(neighbor)){
-                    this.currentPath.push(edge);
+                    this.currentPath.addLast(edge);
                     this.computePathsFrom(neighbor, currentPathLength + 1);
                 }
             }
@@ -80,7 +80,7 @@ public class BatchPathComputation{
         // When we exit from the for cycle, all the paths computable from node have been computed.
         // Hence, we can remove it from the current path.
         if(this.currentPath.size() > 0)
-            this.currentPath.pop();
+            this.currentPath.removeLast();
     }
 
     private boolean checkIfNewNode(IHostNode node){
