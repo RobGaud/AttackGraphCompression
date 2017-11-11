@@ -7,5 +7,5 @@ import graphmodels.graph.IGraph;
  */
 public interface IGraphCompression {
 
-    IGraph compress(IGraph graph);
+    IGraph compress();
 }

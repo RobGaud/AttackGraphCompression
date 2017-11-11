@@ -14,17 +14,25 @@ import java.util.*;
  */
 public class AttackPathExtractor {
 
-    private static int attackPathGenerator;
+    private static int attackPathIDGenerator;
 
-    public static Set<IAttackPath> extractPaths(IGraph graph, IAttackPath compressedPath, int maxInnerPathLength){
-        attackPathGenerator = 0;
+    /**
+     * This method take a path that contains SCCNode objects, and return a list of paths computed
+     * by extracting the inner edges contained into the SCCNode objects themselves.
+     * @param graph: the graph on which the path has been computed
+     * @param compressedPath: the path (containing SCCNode objects) to be analyzed in order to extract the paths
+     * @param maxInnerPathLength: the max allowed length for the inner paths computed inside an SCCNode object.
+     * @return a list of all the extraced paths with length less or equal than maxInnerPathLength
+     */
+    public static List<IAttackPath> extractPaths(IGraph graph, IAttackPath compressedPath, int maxInnerPathLength){
+        attackPathIDGenerator = 0;
 
-        Set<IAttackPath> extractedPaths = new HashSet<>();
+        List<IAttackPath> extractedPaths = new LinkedList<>();
         Set<LinkedList<IEdge>> rawPaths = new HashSet<>();
 
         int currentRank = 0;
+        LinkedList<IEdge> partialPath = new LinkedList<>();
         while(currentRank < compressedPath.getLength()){
-            LinkedList<IEdge> partialPath = new LinkedList<>();
 
             IEdge currentEdge = compressedPath.getEdge(currentRank);
             IHostNode currentHead = graph.getNode(currentEdge.getHeadID());
@@ -61,6 +69,11 @@ public class AttackPathExtractor {
         return extractedPaths;
     }
 
+    /**
+     * This method takes an ISCCEdge object and return an IEdge object with the same data (without inner tail and head)
+     * @param sccEdge: The sccEdge to convert
+     * @return the converted edge
+     */
     private static IEdge convertSCCEdge(IEdge sccEdge){
         if(ISCCAttackEdge.isSCCAttackEdge(sccEdge)){
             ISCCAttackEdge sccae = (ISCCAttackEdge)sccEdge;
@@ -76,6 +89,14 @@ public class AttackPathExtractor {
         }
     }
 
+    /**
+     * This method takes the partial Attack Paths collected so far, concatenates them with the intermediate path
+     * between the partial paths themselves and the SCCNode, and then append all the inner paths found inside the SCCNode.
+     * @param rawPaths: a set of partial paths computed so far
+     * @param intermediatePath the list of edges that link the partial paths with the SCCNode encountered during the traversing
+     * @param innerPaths: all the inner paths that link the inner tail and the inner head
+     * @return a new list of partial paths computed by combining the fragments of paths passed as parameters
+     */
     private static Set<LinkedList<IEdge>> combinePaths(Set<LinkedList<IEdge>> rawPaths, LinkedList<IEdge> intermediatePath, Set<LinkedList<IEdge>> innerPaths){
 
         Set<LinkedList<IEdge>> combinedPaths = new HashSet<>();
@@ -105,7 +126,7 @@ public class AttackPathExtractor {
     }
 
     private static IAttackPath convertRawPath(LinkedList<IEdge> rawPath){
-        IAttackPath attackPath = new AttackPath("EXT_PATH_"+attackPathGenerator);
+        IAttackPath attackPath = new AttackPath("EXT_PATH_"+ attackPathIDGenerator);
         for(IEdge e : rawPath){
             attackPath.addEdge(e);
         }

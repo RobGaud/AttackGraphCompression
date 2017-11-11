@@ -3,11 +3,9 @@ package graphmodels.graph.sccmodels;
 import graphmodels.graph.HostNode;
 import graphmodels.graph.IEdge;
 import graphmodels.graph.IHostNode;
+import graphmodels.hypergraph.sccmodels.ISCCHyperEdge;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Roberto Gaudenzi on 15/09/17.
@@ -27,28 +25,19 @@ public class SCCNode extends HostNode implements ISCCNode{
     @Override
     public void addInboundEdge(IEdge inEdge) {
         // An SCCNode can only have edges implementing ISCCEdge interface
-        boolean isSCCEdge = false;
-        Class[] interfaces = inEdge.getClass().getInterfaces();
-        for(Class i : interfaces){
-            if(i.equals(ISCCEdge.class))
-                isSCCEdge = true;
-        }
-        if(isSCCEdge)
+        if(ISCCAttackEdge.isSCCAttackEdge(inEdge) || ISCCHyperEdge.isSCCHyperEdge(inEdge))
             super.addInboundEdge(inEdge);
-
+        else
+            System.err.println("SCCNode.addInboundEdge: adding a non-SCCEdge!");
     }
 
     @Override
-    public void addOutboundEdge(IEdge inEdge) {
+    public void addOutboundEdge(IEdge outEdge) {
         // An SCCNode can only have edges implementing ISCCEdge interface
-        boolean isSCCEdge = false;
-        Class[] interfaces = inEdge.getClass().getInterfaces();
-        for(Class i : interfaces){
-            if(i.equals(ISCCEdge.class))
-                isSCCEdge = true;
-        }
-        if(isSCCEdge)
-            super.addOutboundEdge(inEdge);
+        if(ISCCAttackEdge.isSCCAttackEdge(outEdge) || ISCCHyperEdge.isSCCHyperEdge(outEdge))
+            super.addOutboundEdge(outEdge);
+        else
+            System.err.println("SCCNode.addOutboundEdge: adding a non-SCCEdge!");
 
     }
 
@@ -76,9 +65,14 @@ public class SCCNode extends HostNode implements ISCCNode{
     @Override
     public void addInnerEdge(IEdge edge) {
         if(!this.innerEdges.containsKey(edge.getTailID())){
-            this.innerEdges.put(edge.getTailID(), new HashSet<>());
+            this.innerEdges.put(edge.getTailID(), new LinkedList<>());
         }
-        this.innerEdges.get(edge.getTailID()).add(edge);
+
+        if(this.innerEdges.get(edge.getTailID()).contains(edge))
+            System.err.println("SCCNode.addInnerEdge: inner edge already inserted! "
+                    + edge.getID() + ", from " + edge.getTailID() + " to " + edge.getHeadID());
+        else
+            this.innerEdges.get(edge.getTailID()).add(edge);
     }
 
     @Override

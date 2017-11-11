@@ -180,11 +180,9 @@ public class JacksonHAGUtils {
             for(IEdge outEdge : node.getOutboundEdges()){
                 ObjectNode edgeJson;
                 if(ISCCAttackEdge.isSCCAttackEdge(outEdge)){
-                    System.out.println("JacksonHAGUtils.storeGraph: creating sccAttackEdge.");
                     edgeJson = JacksonEdgeUtils.storeSCCAttackEdge(mapper, (ISCCAttackEdge)outEdge);
                 }
                 else if(ISCCHyperEdge.isSCCHyperEdge(outEdge)){
-                    System.out.println("JacksonHAGUtils.storeGraph: creating sccHyperEdge.");
                     edgeJson = JacksonEdgeUtils.storeSCCHyperEdge(mapper, (ISCCHyperEdge)outEdge);
                 }
                 else if(IAttackEdge.isAttackEdge(outEdge)){

@@ -11,9 +11,7 @@ import graphmodels.hypergraph.sccmodels.ISCCHyperEdge;
 import graphmodels.hypergraph.sccmodels.SCCHyperEdge;
 import sccfinder.ISCCFinder;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 import static utils.Constants.*;
 
@@ -33,7 +31,6 @@ public class GraphCompression implements IGraphCompression{
     private Collection<String> visitedNodes; // It will contain the IDs of all the nodes already compressed
     private int minSize;
 
-
     public GraphCompression(ISCCFinder isccFinder, int minSize){
         this.isccFinder = isccFinder;
         this.graphToCompress = isccFinder.getGraph();
@@ -41,12 +38,13 @@ public class GraphCompression implements IGraphCompression{
         this.minSize = minSize;
     }
 
-    public IGraph compress(IGraph hyperGraph){
+    public IGraph compress(){
         // For each entry point N, for each neighbor M of N, call the ISCCFinder to get the SCCs
         // For each SCC found, create an associated SCCNode and add it to the graph. Then, remove the compressed nodes.
 
         for(IHostNode ep : graphToCompress.getEntryPoints()) {
-            for(IEdge epOutEdge : ep.getOutboundEdges()) {
+            Collection<IEdge> outboundEdges = new LinkedList<>(ep.getOutboundEdges());
+            for(IEdge epOutEdge : outboundEdges) {
 
                 IHostNode epNeighbor = graphToCompress.getHostNodes().get(epOutEdge.getHeadID());
 
@@ -59,6 +57,10 @@ public class GraphCompression implements IGraphCompression{
 
                     if( sccs != null){
                         for( String sccID : sccs.keySet() ){
+                            /* For each node visited by the sccFinder, mark it as "Visited"
+                             * Then, if the size of the scc is big enough, create an associated SCC node.
+                             */
+
                             Collection<IHostNode> scc = sccs.get(sccID);
                             System.out.println("GraphCompression.compress: scc size = " + scc.size());
 
@@ -66,7 +68,7 @@ public class GraphCompression implements IGraphCompression{
                             for(IHostNode node : scc){
                                 String nodeID = node.getID();
                                 if(this.visitedNodes.contains(nodeID)){
-                                    System.out.println("*** ERROR: THIS NODE SHOULD NOT BE ALREADY MARKED ***");
+                                    System.err.println("*** ERROR: THIS NODE SHOULD NOT BE ALREADY MARKED ***");
                                 }
                                 this.visitedNodes.add(nodeID);
                             }
@@ -78,6 +80,7 @@ public class GraphCompression implements IGraphCompression{
                 }
             }
         }
+
         return this.graphToCompress;
     }
 
@@ -97,8 +100,8 @@ public class GraphCompression implements IGraphCompression{
         for(IHostNode n : scc){
 
             // 1) for each inbound edge 'e' of node 'n', replace it with an SCCEdge/SCCHyperEdge where 'n' is the inner head
-            for(IEdge e: n.getInboundEdges()){
-                this.graphToCompress.removeEdge(e);
+            Collection<IEdge> inboundEdges = new LinkedList<>(n.getInboundEdges());
+            for(IEdge e: inboundEdges){
 
                 /* Two cases here:
                  * 1) The tail does not belong to the SCC Node => add a new inbound edge to the SCC Node;
@@ -109,7 +112,7 @@ public class GraphCompression implements IGraphCompression{
                     if(ISCCHyperEdge.isSCCHyperEdge(e)){
                         ISCCHyperEdge scche = (ISCCHyperEdge)e;
                         this.graphToCompress.addEdge(new SCCHyperEdge(SCC_EDGE_ID_PREFIX + scche.getID(), scche.getTailID(), sccNodeID,
-                                scche.getVulnNodeID(), scche.getData(), scche.getTailID(), n.getID()));
+                                scche.getVulnNodeID(), scche.getData(), scche.getInnerTail(), n.getID()));
                     }
                     else if(ISCCAttackEdge.isSCCAttackEdge(e)){
                         ISCCAttackEdge sccae = (ISCCAttackEdge)e;
@@ -125,17 +128,23 @@ public class GraphCompression implements IGraphCompression{
                         this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX + e.getID(), e.getTailID(), sccNodeID,
                                 e.getData(), null, n.getID()));
                     }
+
                 }
                 else{
                     // We want to keep track of the internal edges between nodes contained by the SCC for Path analysis
                     sccNode.addInnerEdge(e);
                 }
+
+                this.graphToCompress.removeEdge(e);
             }
 
+
             // 2) for each outbound edge 'e' of node 'n', replace it with an SCCEdge/SCCHyperEdge where 'n' is the inner tail
-            for(IEdge e: n.getOutboundEdges()){
-                this.graphToCompress.removeEdge(e);
+            Collection<IEdge> outboundEdges = new LinkedList<>(n.getOutboundEdges());
+            for(IEdge e: outboundEdges){
+
                 if(!sccNode.hasInnerNode(e.getHeadID())){
+
                     // We need to handle the case when the edge will connect two SCC nodes
                     if(ISCCHyperEdge.isSCCHyperEdge(e)){
                         ISCCHyperEdge scche = (ISCCHyperEdge)e;
@@ -157,7 +166,14 @@ public class GraphCompression implements IGraphCompression{
                         this.graphToCompress.addEdge(new SCCAttackEdge(SCC_EDGE_ID_PREFIX + e.getID(), sccNodeID, e.getHeadID(),
                                 e.getData(), n.getID(), null));
                     }
+
                 }
+                else{
+                    // We want to keep track of the internal edges between nodes contained by the SCC for Path analysis
+                    sccNode.addInnerEdge(e);
+                }
+
+                this.graphToCompress.removeEdge(e);
             }
 
             // Finally, remove the host node from the graph
