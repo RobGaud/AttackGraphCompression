@@ -12,7 +12,7 @@ public class BatchPathsMain {
     public static void main(String[] args){
         String dataFolderPath = Constants.getDataHome();
 
-        String attackGraphName = "HAG_attack_graph";
+        String attackGraphName = "C-HAG_attack_graph";
 
         int maxPathLength = Constants.MAX_PATH_LENGTHS[1];
 

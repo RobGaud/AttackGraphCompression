@@ -43,9 +43,17 @@ public class AttackPathExtractor {
                  * Compute all the possible paths from h1 towards t2 made only of inner edges of currentHead (which is an SCCNode)
                  */
 
-                ISCCEdge nextEdge = (ISCCEdge)compressedPath.getEdge(currentRank+1);
+                IEdge nextEdge = compressedPath.getEdge(currentRank+1);
+
+                ISCCEdge sccNextEdge;
+                if(ISCCHyperEdge.isSCCHyperEdge(nextEdge)){
+                    sccNextEdge = (ISCCHyperEdge)nextEdge;
+                }
+                else{
+                    sccNextEdge = (ISCCAttackEdge)nextEdge;
+                }
                 String h1 = ((ISCCEdge)currentEdge).getInnerHead();
-                String t2 = nextEdge.getInnerTail();
+                String t2 = sccNextEdge.getInnerTail();
                 Set<LinkedList<IEdge>> innerPaths = InnerPathComputation.execute((ISCCNode)currentHead, h1, t2, maxInnerPathLength);
 
                 // Add the innerPaths to each extractedPath
@@ -92,37 +100,54 @@ public class AttackPathExtractor {
     /**
      * This method takes the partial Attack Paths collected so far, concatenates them with the intermediate path
      * between the partial paths themselves and the SCCNode, and then append all the inner paths found inside the SCCNode.
-     * @param rawPaths: a set of partial paths computed so far
+     * @param rootPaths: a set of partial paths computed so far
      * @param intermediatePath the list of edges that link the partial paths with the SCCNode encountered during the traversing
      * @param innerPaths: all the inner paths that link the inner tail and the inner head
      * @return a new list of partial paths computed by combining the fragments of paths passed as parameters
      */
-    private static Set<LinkedList<IEdge>> combinePaths(Set<LinkedList<IEdge>> rawPaths, LinkedList<IEdge> intermediatePath, Set<LinkedList<IEdge>> innerPaths){
+    private static Set<LinkedList<IEdge>> combinePaths(Set<LinkedList<IEdge>> rootPaths, LinkedList<IEdge> intermediatePath, Set<LinkedList<IEdge>> innerPaths){
 
-        Set<LinkedList<IEdge>> combinedPaths = new HashSet<>();
+        Set<LinkedList<IEdge>> endPaths = new HashSet<>();
 
-        for (LinkedList<IEdge> rawPath : rawPaths) {
-            for (LinkedList<IEdge> innerPath : innerPaths) {
+        for (LinkedList<IEdge> innerPath : innerPaths) {
 
-                // Create a new path which initial part is 'rawPath'
-                LinkedList<IEdge> combinedPath = new LinkedList<>();
-                combinedPath.addAll(rawPath);
+            // Create a new path which initial part is 'rawPath'
+            LinkedList<IEdge> endPath = new LinkedList<>();
 
-                // Add all the edges within intermediatePath
-                for (IEdge ie : intermediatePath) {
-                    combinedPath.addLast(ie);
-                }
-
-                // Add all the edges within the innerPath
-                for (IEdge ipe : innerPath) {
-                    combinedPath.addLast(ipe);
-                }
-
-                combinedPaths.add(combinedPath);
+            // Add all the edges within intermediatePath
+            for (IEdge ie : intermediatePath) {
+                endPath.addLast(ie);
             }
+
+            // Add all the edges within the innerPath
+            for (IEdge ipe : innerPath) {
+                endPath.addLast(ipe);
+            }
+
+            endPaths.add(endPath);
         }
 
-        return combinedPaths;
+        if(rootPaths.size() == 0){
+            return endPaths;
+        }
+        else{
+            Set<LinkedList<IEdge>> combinedPaths = new HashSet<>();
+            for (LinkedList<IEdge> rootPath : rootPaths) {
+                for (LinkedList<IEdge> endPath : endPaths) {
+                    // Create a new path which initial part is 'rawPath'
+                    LinkedList<IEdge> combinedPath = new LinkedList<>();
+                    combinedPath.addAll(rootPath);
+
+                    for(IEdge e : endPath){
+                        combinedPath.addLast(e);
+                    }
+
+                    combinedPaths.add(combinedPath);
+                }
+            }
+
+            return combinedPaths;
+        }
     }
 
     private static IAttackPath convertRawPath(LinkedList<IEdge> rawPath){

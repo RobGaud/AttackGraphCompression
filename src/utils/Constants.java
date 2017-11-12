@@ -52,17 +52,17 @@ public class Constants {
         float score;
         switch (ac){
             case "LOW":
-                score = 0.33f;
+                score = 0.20f;
                 break;
             case "MEDIUM":
-                score = 0.50f;
+                score = 0.35f;
                 break;
             case "HIGH":
-                score = 0.67f;
+                score = 0.50f;
                 break;
             default:
                 System.err.println("ERROR: UNEXPECTED ACCESS COMPLEXITY VALUE = " + ac);
-                score = 0.50f;
+                score = 0.30f;
         }
         return score;
     }
@@ -70,7 +70,7 @@ public class Constants {
 
     public static final float EPSILON = 0.50f;
 
-    public static final int[] MAX_PATH_LENGTHS = {4, 5, 6, 7, 8};
+    public static final int[] MAX_PATH_LENGTHS = {3, 4, 5, 6, 7, 8};
 
     public static final int[] MAX_INNER_PATH_LENGTHS = {2, 3, 4};
 

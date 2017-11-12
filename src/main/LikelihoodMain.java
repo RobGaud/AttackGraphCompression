@@ -21,9 +21,9 @@ public class LikelihoodMain {
     public static void main(String[] args){
         int pathLength = Constants.MAX_PATH_LENGTHS[0];
         String dataFolderPath = Constants.getDataHome();
-        String pathsFolderPath = dataFolderPath + "C-HAG_attack_graph_paths_" + pathLength + "/";
+        String attackGraphName = "HAG_attack_graph";
+        String pathsFolderPath = dataFolderPath + attackGraphName + "_paths_" + pathLength + "/";
 
-        String attackGraphName = "C-HAG_attack_graph";
 
         String attackGraphFile = attackGraphName + ".json";
         String attackPathsFile = attackGraphName + "_paths_" + pathLength + "_0.json";

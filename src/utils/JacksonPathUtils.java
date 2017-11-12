@@ -110,7 +110,7 @@ public class JacksonPathUtils {
                 edgeJson = JacksonEdgeUtils.storeSCCAttackEdge(mapper, (ISCCAttackEdge)edge);
             }
             else if(ISCCHyperEdge.isSCCHyperEdge(edge)){
-                edgeJson = JacksonEdgeUtils.storeHyperEdge(mapper, (ISCCHyperEdge)edge);
+                edgeJson = JacksonEdgeUtils.storeSCCHyperEdge(mapper, (ISCCHyperEdge)edge);
             }
             else if(IAttackEdge.isAttackEdge(edge)){
                 edgeJson = JacksonEdgeUtils.storeAttackEdge(mapper, (IAttackEdge)edge);
