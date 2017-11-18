@@ -19,14 +19,13 @@ public class LikelihoodMain {
     private static Map<String, IAttackPath> pathsMap;
 
     public static void main(String[] args){
-        int pathLength = Constants.MAX_PATH_LENGTHS[0];
+        int pathLength = Constants.MAX_PATH_LENGTHS[3];
         String dataFolderPath = Constants.getDataHome();
         String attackGraphName = "HAG_attack_graph";
         String pathsFolderPath = dataFolderPath + attackGraphName + "_paths_" + pathLength + "/";
 
-
         String attackGraphFile = attackGraphName + ".json";
-        String attackPathsFile = attackGraphName + "_paths_" + pathLength + "_0.json";
+        String attackPathsFile = attackGraphName + "_paths_" + pathLength + "_8.json";
         String subgraphsFile   = attackGraphName + "_subgraphs.json";
 
         //Load hypergraph
@@ -41,6 +40,8 @@ public class LikelihoodMain {
 
         Map<String, Collection<IAttackPath>> pathsByTarget = labelPathsByTarget(pathsMap.values());
 
+        long startTime = System.currentTimeMillis();
+
         //For each target T, call ComputeSL and obtain the Success Likelihood for all the pathsMap that lead to T itself.
         for(String targetID : pathsByTarget.keySet()){
 
@@ -49,6 +50,10 @@ public class LikelihoodMain {
             //Store the SL value into the associated path
             setSL(pathsSL);
         }
+
+        long endTime = System.currentTimeMillis();
+        double execTime = (0.0+endTime-startTime)/1000;
+        System.out.println("Exec time = " + execTime + " seconds.");
 
         // Finally, store the pathsMap with the updated SL value in a file
         JacksonPathUtils.storePaths(attackGraphName, pathsMap.values(), dataFolderPath, attackPathsFile);

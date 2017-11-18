@@ -16,7 +16,7 @@ import java.util.Set;
 public class SubgraphsMain {
     public static void main(String[] args){
         String dataFolderPath = Constants.getDataHome();
-        String attackGraphName = "HAG_attack_graph";
+        String attackGraphName = "C-HAG_attack_graph";
 
         String attackGraphFile = attackGraphName + ".json";
         String subgraphsFile   = attackGraphName + "_subgraphs.json";

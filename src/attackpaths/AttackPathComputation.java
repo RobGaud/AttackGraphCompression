@@ -28,12 +28,18 @@ public class AttackPathComputation{
 
     public Collection<IAttackPath> computePaths() {
 
+        long startTime = System.currentTimeMillis();
+
         for(IHostNode entryPoint : graph.getEntryPoints()){
             System.out.println("##### START COMPUTING PATHS FROM ENTRY POINT: " + entryPoint.getID());
             this.currentPath = new LinkedList<>();
             // Inserting a dummy edge
             computePathsFrom(entryPoint, 0);
         }
+
+        long endTime = System.currentTimeMillis();
+        double execTime = (0.0+endTime-startTime)/1000;
+        System.out.println("Exec time = " + execTime+ " seconds.");
 
         return this.paths;
     }

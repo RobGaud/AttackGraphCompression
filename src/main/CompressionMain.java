@@ -28,7 +28,13 @@ public class CompressionMain {
         ISCCFinder sccFinder = new KosarajuSCCFinder(hyperGraph);
         IGraphCompression graphCompressor = new GraphCompression(sccFinder, Constants.MIN_SCC_SIZE);
 
+        long start = System.currentTimeMillis();
         IGraph newGraph = graphCompressor.compress();
+        long stop = System.currentTimeMillis();
+        double execTime = (stop - start + 0.0)/1000;
+
+        System.out.println("Time required: " + execTime + " seconds.");
+
         System.out.println("Now the graph contains " + newGraph.getHostNodes().keySet().size() + " nodes.");
 
         if(IHyperGraph.isInstance(newGraph)){

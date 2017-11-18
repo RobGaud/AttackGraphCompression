@@ -61,7 +61,7 @@ public class ComputeStateVector {
             }
         }
 
-        System.out.println("ERROR: getNodeIndex did not found nodeID index.");
+        System.out.println("ERROR: getNodeIndex did not found index for nodeID " + nodeID + ".");
         return -1;
     }
 }

@@ -27,14 +27,24 @@ public class ComputePathsMTAO {
 
         assignIndices(targetNode, subgraph);
         double[][] P = ComputeTransitionProb.execute(graph, nodesIndices, Constants.EPSILON);
+        /*
         double[] exitRates = ComputeExitRates.execute(graph, nodesIndices);
         double[][] A = ComputeGeneratorMatrix.execute(exitRates, P);
         double[][] inverted_A_u = computeInvertedMatrix(A);
+        */
 
+        /* Idea: try to include nodes' position in exit rates computation.
+         * Problem : this implies that exitRates (and hence matrix A) has to be computed for each attack path,
+         *           resulting in a (probably) big impact on performance.
+         */
         for(IAttackPath path : paths){
             double[] S = ComputeStateVector.execute(path, nodesIndices);
 
-            mtaoMap.put(path.getID(), computeMTAO(inverted_A_u, S));
+            double[] exitRates = ComputeExitRates.execute(graph, nodesIndices, path, S);
+            double[][] A = ComputeGeneratorMatrix.execute(exitRates, P);
+            double[][] invertedAu = computeInvertedMatrix(A);
+
+            mtaoMap.put(path.getID(), computeMTAO(invertedAu, S));
         }
 
         return mtaoMap;

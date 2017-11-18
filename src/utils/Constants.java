@@ -52,17 +52,17 @@ public class Constants {
         float score;
         switch (ac){
             case "LOW":
-                score = 0.20f;
+                score = 0.60f;
                 break;
             case "MEDIUM":
-                score = 0.35f;
+                score = 0.40f;
                 break;
             case "HIGH":
-                score = 0.50f;
+                score = 0.20f;
                 break;
             default:
                 System.err.println("ERROR: UNEXPECTED ACCESS COMPLEXITY VALUE = " + ac);
-                score = 0.30f;
+                score = 0.40f;
         }
         return score;
     }
@@ -75,6 +75,8 @@ public class Constants {
     public static final int[] MAX_INNER_PATH_LENGTHS = {2, 3, 4};
 
     public static final int MAX_PATHS_PER_FILE = 500000;
+
+    public static final int OBSERVED_EXIT_RATE = 1000;
 
     public static String getPathsFileName(String graphName, int pathsLength){
         return graphName + "_paths_" + pathsLength + ".json";
