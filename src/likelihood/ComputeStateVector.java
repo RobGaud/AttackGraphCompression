@@ -16,7 +16,6 @@ public class ComputeStateVector {
             stateVector = computeFullVector(path, nodesIndices);
         else
             stateVector = computeStartVector(path, nodesIndices);
-        //double[] stateVector = computeFullVector(path, nodesIndices);
 
         return stateVector;
     }
@@ -36,7 +35,7 @@ public class ComputeStateVector {
     private static double[] computeFullVector(IAttackPath path, Map<Integer, String> nodesIndices){
         int pathLength = path.getLength();
         int n = nodesIndices.values().size();
-        double s = 1.0 /(pathLength+1);
+        double s = 1.0 /(pathLength);
 
         Map<Integer, IEdge> edges = path.getEdges();
 
@@ -47,12 +46,10 @@ public class ComputeStateVector {
                 String tailID = edge.getTailID();
                 stateVector[getNodeIndex(nodesIndices, tailID)] = s;
             }
-            //TODO remove if(rank != n){
             String headID = edge.getHeadID();
             int index = getNodeIndex(nodesIndices, headID);
             if(index < n-1)
                 stateVector[index] = s;
-            //TODO remove }
         }
         return stateVector;
     }

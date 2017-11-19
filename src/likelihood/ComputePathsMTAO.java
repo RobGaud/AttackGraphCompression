@@ -1,6 +1,7 @@
 package likelihood;
 
 import attackpaths.IAttackPath;
+import graphmodels.graph.IGraph;
 import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.IHyperGraph;
 
@@ -9,10 +10,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import utils.Constants;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Roberto Gaudenzi on 15/10/17.
@@ -21,23 +19,18 @@ public class ComputePathsMTAO {
 
     private static Map<Integer, String> nodesIndices;
 
-    public static Map<String, Double> execute(IHyperGraph graph, Set<IHostNode> subgraph, Collection<IAttackPath> paths, IHostNode targetNode, boolean fullPath){
+    public static Map<String, Double> execute(IHyperGraph graph, Collection<IAttackPath> paths, IHostNode targetNode, boolean fullPath){
 
         Map<String, Double> mtaoMap = new HashMap<>();
-
-        assignIndices(targetNode, subgraph);
-        double[][] P = ComputeTransitionProb.execute(graph, nodesIndices, Constants.EPSILON);
-        /*
-        double[] exitRates = ComputeExitRates.execute(graph, nodesIndices);
-        double[][] A = ComputeGeneratorMatrix.execute(exitRates, P);
-        double[][] inverted_A_u = computeInvertedMatrix(A);
-        */
 
         /* Idea: try to include nodes' position in exit rates computation.
          * Problem : this implies that exitRates (and hence matrix A) has to be computed for each attack path,
          *           resulting in a (probably) big impact on performance.
          */
         for(IAttackPath path : paths){
+            Set<IHostNode> pathSubgraph = getPathSubgraph(graph, path);
+            assignIndices(targetNode, pathSubgraph);
+            double[][] P = ComputeTransitionProb.execute(graph, nodesIndices, Constants.EPSILON);
             double[] S = ComputeStateVector.execute(path, nodesIndices, fullPath);
 
             double[] exitRates = ComputeExitRates.execute(graph, nodesIndices, path, S);
@@ -58,7 +51,6 @@ public class ComputePathsMTAO {
         for(int j = 0; j < length; j++){
             temp[j] = 0.0f;
             for(int k = 0; k < length; k++){
-                //TODO it was [j][k] before
                 temp[j] += -1 * S[k] * inverted_A_u[k][j];
             }
         }
@@ -82,6 +74,18 @@ public class ComputePathsMTAO {
 
         RealMatrix invertRmA = MatrixUtils.inverse(MatrixUtils.createRealMatrix(A_u));
         return invertRmA.getData();
+    }
+
+    private static Set<IHostNode> getPathSubgraph(IGraph graph, IAttackPath path){
+        Set<IHostNode> pathSubgraph = new HashSet<>();
+        for(int i = 0; i < path.getLength(); i++){
+            if(i == 0)
+                pathSubgraph.add(graph.getNode(path.getEdge(0).getTailID()));
+
+            pathSubgraph.add(graph.getNode(path.getEdge(i).getHeadID()));
+        }
+
+        return pathSubgraph;
     }
 
     private static void assignIndices(IHostNode target, Set<IHostNode> subgraph){

@@ -1,13 +1,11 @@
 package main;
 
 import attackpaths.IAttackPath;
-import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.IHyperGraph;
 import likelihood.ComputeSL;
 import utils.Constants;
 import utils.JacksonHAGUtils;
 import utils.JacksonPathUtils;
-import utils.JacksonSubgraphUtils;
 
 import java.util.*;
 
@@ -19,14 +17,13 @@ public class LikelihoodMain {
     private static Map<String, IAttackPath> pathsMap;
 
     public static void main(String[] args){
-        int pathLength = Constants.MAX_PATH_LENGTHS[2];
+        int pathLength = Constants.MAX_PATH_LENGTHS[1];
         String dataFolderPath = Constants.getDataHome();
         String attackGraphName = "HAG_attack_graph";
         String pathsFolderPath = dataFolderPath + attackGraphName + "_paths_" + pathLength + "/";
 
         String attackGraphFile = attackGraphName + ".json";
         String attackPathsFile = attackGraphName + "_paths_" + pathLength + "_0.json";
-        String subgraphsFile   = attackGraphName + "_subgraphs.json";
 
         //Load hypergraph
         IHyperGraph graph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, attackGraphFile);
@@ -35,9 +32,6 @@ public class LikelihoodMain {
         System.out.println("Calling loadPaths().");
         pathsMap = JacksonPathUtils.loadPaths(pathsFolderPath, attackPathsFile);
 
-        System.out.println("Calling loadSubgraphs().");
-        Map<String, Set<IHostNode>> subgraphsMap = JacksonSubgraphUtils.loadSubgraphs(dataFolderPath, subgraphsFile, graph.getHostNodes());
-
         Map<String, Collection<IAttackPath>> pathsByTarget = labelPathsByTarget(pathsMap.values());
 
         long startTime = System.currentTimeMillis();
@@ -45,7 +39,7 @@ public class LikelihoodMain {
         //For each target T, call ComputeSL and obtain the Success Likelihood for all the pathsMap that lead to T itself.
         for(String targetID : pathsByTarget.keySet()){
 
-            Map<String, Double> pathsSL = ComputeSL.execute(graph, subgraphsMap.get(targetID), pathsByTarget.get(targetID), graph.getNode(targetID));
+            Map<String, Double> pathsSL = ComputeSL.execute(graph, pathsByTarget.get(targetID), graph.getNode(targetID));
 
             //Store the SL value into the associated path
             setSL(pathsSL);

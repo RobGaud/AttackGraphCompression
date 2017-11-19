@@ -11,53 +11,41 @@ import java.util.*;
  */
 public class ComputeSL {
 
-    public static Map<String, Double> execute(IHyperGraph graph, Set<IHostNode> subgraph, Collection<IAttackPath> paths, IHostNode targetNode){
+    public static Map<String, Double> execute(IHyperGraph graph, Collection<IAttackPath> paths, IHostNode targetNode){
 
-        Map<String, Double> mtaoMap = ComputePathsMTAO.execute(graph, subgraph, paths, targetNode, false);
-        Map<String, Double> mtaoMinMap = ComputePathsMTAO.execute(graph, subgraph, paths, targetNode, true);
-
-        /* TODO remove
-        for(String id : mtaoMap.keySet()){
-            System.out.println("------------------------------------------------------------------------");
-            System.out.println("Mtao    of path + " + id + " = " + mtaoMap.get(id));
-            System.out.println("MtaoMin of path + " + id + " = " + mtaoMinMap.get(id));
-        }
-        */
-
-        //double mtaoMin = getMTAOMin(mtaoMap.values());
+        Map<String, Double> mtaoMap = ComputePathsMTAO.execute(graph, paths, targetNode, false);
+        Map<String, Double> mtaoMinMap = ComputePathsMTAO.execute(graph, paths, targetNode, true);
 
         Map<String, Double> slMap = new HashMap<>();
 
-        int wrongCount = 0;
         for(String pathID : mtaoMap.keySet()){
             double pathMTAO = mtaoMap.get(pathID);
             double mtaoMin = mtaoMinMap.get(pathID);
             double sl = computeSL(pathMTAO, mtaoMin);
-            if(Double.isInfinite(sl) || Double.isNaN(sl))
-                wrongCount++;
             slMap.put(pathID, sl);
         }
 
-        System.out.println("InfCount = " + wrongCount);
+        /* TODO remove */
+        double minSL = 1.0;
+        double maxSL = 0.0;
+        int tooHigh = 0;
+        for(String pathID : slMap.keySet()){
+            double pathSL = slMap.get(pathID);
+            if(pathSL > maxSL && pathSL < 1.0)
+                maxSL = pathSL;
+            if(pathSL < minSL)
+                minSL = pathSL;
+            if(pathSL > 1.0)
+                tooHigh++;
+        }
+        System.out.println("ComputeSL: minSL = " + minSL + ", maxSL = " + maxSL);
+        System.out.println("ComputeSL: tooHigh = " + tooHigh);
+
 
         return slMap;
     }
 
     private static double computeSL(double pathMTAO, double mtaoMin){
-        return -20 * Math.log10((pathMTAO - mtaoMin)/pathMTAO);
-    }
-
-    private static double getMTAOMin(Collection<Double> mtaoValues){
-        Iterator<Double> it = mtaoValues.iterator();
-
-        double min = it.next();
-        while(it.hasNext()){
-            double mtao = it.next();
-            if(mtao < min)
-                min = mtao;
-        }
-
-        System.out.println("ComputeSL: minMtao = " + min);
-        return min;
+        return -20 * Math.log((pathMTAO - mtaoMin)/pathMTAO);
     }
 }
