@@ -140,7 +140,7 @@ public class JacksonPathUtils {
     /** METHOD FOR LOADING SINGLE PATH **/
     private static IAttackPath loadAttackPath(JsonNode pathJson, Map<String, IEdge> edgesMap){
         String pathID = pathJson.get("path_Ident").asText();
-        float likelihood = (float)pathJson.get("likelihood").asDouble();
+        double likelihood = pathJson.get("likelihood").asDouble();
         IAttackPath path = new AttackPath(pathID, likelihood);
 
         JsonNode pathEdgesJson = pathJson.get("path_edges");

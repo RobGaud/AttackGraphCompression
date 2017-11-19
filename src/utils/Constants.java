@@ -78,6 +78,9 @@ public class Constants {
 
     public static final int OBSERVED_EXIT_RATE = 1000;
 
+    public static final double[] MIN_COMPRESSED_SL = {0.0, 0.10, 0.30, 0.50};
+    public static final double[] MIN_PATHS_SL = {0.10, 0.30, 0.50};
+
     public static String getPathsFileName(String graphName, int pathsLength){
         return graphName + "_paths_" + pathsLength + ".json";
     }

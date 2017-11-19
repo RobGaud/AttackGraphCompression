@@ -16,11 +16,12 @@ public class AttackPath implements IAttackPath{
 
     public AttackPath(String id, double likelihood){
         this.id = id;
+        this.likelihood = likelihood;
         this.edges = new HashMap<>();
     }
 
     public AttackPath(String id){
-        this(id, 0.0f);
+        this(id, 0.0);
     }
 
     public String getID(){
