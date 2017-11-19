@@ -10,9 +10,12 @@ import java.util.Map;
  */
 public class ComputeStateVector {
 
-    public static double[] execute(IAttackPath path, Map<Integer, String> nodesIndices){
-
-        double[] stateVector = computeStartVector(path, nodesIndices);
+    public static double[] execute(IAttackPath path, Map<Integer, String> nodesIndices, boolean fullPath){
+        double[] stateVector;
+        if(fullPath)
+            stateVector = computeFullVector(path, nodesIndices);
+        else
+            stateVector = computeStartVector(path, nodesIndices);
         //double[] stateVector = computeFullVector(path, nodesIndices);
 
         return stateVector;
@@ -33,7 +36,7 @@ public class ComputeStateVector {
     private static double[] computeFullVector(IAttackPath path, Map<Integer, String> nodesIndices){
         int pathLength = path.getLength();
         int n = nodesIndices.values().size();
-        double s = 1.0 / pathLength;
+        double s = 1.0 /(pathLength+1);
 
         Map<Integer, IEdge> edges = path.getEdges();
 
@@ -44,12 +47,12 @@ public class ComputeStateVector {
                 String tailID = edge.getTailID();
                 stateVector[getNodeIndex(nodesIndices, tailID)] = s;
             }
-            if(rank != n){
-                String headID = edge.getHeadID();
-                int index = getNodeIndex(nodesIndices, headID);
-                if(index < n-1)
-                    stateVector[index] = s;
-            }
+            //TODO remove if(rank != n){
+            String headID = edge.getHeadID();
+            int index = getNodeIndex(nodesIndices, headID);
+            if(index < n-1)
+                stateVector[index] = s;
+            //TODO remove }
         }
         return stateVector;
     }
@@ -61,7 +64,7 @@ public class ComputeStateVector {
             }
         }
 
-        System.out.println("ERROR: getNodeIndex did not found index for nodeID " + nodeID + ".");
+        System.err.println("ERROR: getNodeIndex did not found index for nodeID " + nodeID + ".");
         return -1;
     }
 }

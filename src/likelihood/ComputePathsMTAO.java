@@ -21,7 +21,7 @@ public class ComputePathsMTAO {
 
     private static Map<Integer, String> nodesIndices;
 
-    public static Map<String, Double> execute(IHyperGraph graph, Set<IHostNode> subgraph, Collection<IAttackPath> paths, IHostNode targetNode){
+    public static Map<String, Double> execute(IHyperGraph graph, Set<IHostNode> subgraph, Collection<IAttackPath> paths, IHostNode targetNode, boolean fullPath){
 
         Map<String, Double> mtaoMap = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class ComputePathsMTAO {
          *           resulting in a (probably) big impact on performance.
          */
         for(IAttackPath path : paths){
-            double[] S = ComputeStateVector.execute(path, nodesIndices);
+            double[] S = ComputeStateVector.execute(path, nodesIndices, fullPath);
 
             double[] exitRates = ComputeExitRates.execute(graph, nodesIndices, path, S);
             double[][] A = ComputeGeneratorMatrix.execute(exitRates, P);
@@ -58,7 +58,8 @@ public class ComputePathsMTAO {
         for(int j = 0; j < length; j++){
             temp[j] = 0.0f;
             for(int k = 0; k < length; k++){
-                temp[j] += -1 * S[k] * inverted_A_u[j][k];
+                //TODO it was [j][k] before
+                temp[j] += -1 * S[k] * inverted_A_u[k][j];
             }
         }
 

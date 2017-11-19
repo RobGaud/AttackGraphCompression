@@ -33,7 +33,7 @@ public class ComputeExitRates {
         for(IEdge outEdge : node.getOutboundEdges()){
             String vulnID = ((IHyperEdge)outEdge).getVulnNodeID();
             IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
-            float vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
+            double vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
             if(vulnComplexity < sk){
                 sk = vulnComplexity;
             }
@@ -47,11 +47,10 @@ public class ComputeExitRates {
         double[] exitRates = new double[indicesMatrix.values().size()];
 
         for(int nodeIndex : indicesMatrix.keySet()){
-            IHostNode node = graph.getNode(indicesMatrix.get(nodeIndex));
-
             if(nodeIndex < stateVector.length && stateVector[nodeIndex] != 0.0)
                 exitRates[nodeIndex] = Constants.OBSERVED_EXIT_RATE;
             else{
+                IHostNode node = graph.getNode(indicesMatrix.get(nodeIndex));
                 int nodeRank = getNodeRank(node, path);
                 if(nodeRank != 0)
                     exitRates[nodeIndex] = getExitRate(graph, node, nodeRank);
@@ -59,6 +58,14 @@ public class ComputeExitRates {
                     exitRates[nodeIndex] = getExitRate(graph, node);
             }
         }
+
+        /*TODO remove
+        System.out.println("Exitrates:");
+        for(int i = 0; i < exitRates.length; i++){
+            System.out.print(exitRates[i] + " ");
+        }
+        System.out.println();
+        */
 
         return exitRates;
     }
@@ -68,8 +75,8 @@ public class ComputeExitRates {
         for(IEdge inEdge : node.getInboundEdges()){
             String vulnID = ((IHyperEdge)inEdge).getVulnNodeID();
             IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
-            float vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
-            if(vulnComplexity < sk){
+            double vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
+            if(vulnComplexity > sk){
                 sk = vulnComplexity;
             }
         }
