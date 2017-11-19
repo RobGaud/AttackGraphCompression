@@ -88,7 +88,7 @@ public class ComputeExitRates {
             String nodeID = node.getID();
             String edgeHeadID = path.getEdge(i).getHeadID();
             if(nodeID.equals(edgeHeadID))
-                return i;
+                return i+1;
         }
 
         //System.err.println("ComputeExitRates.getNodeRank: node with ID " + node.getID() + " not in path with ID " + path.getID());
