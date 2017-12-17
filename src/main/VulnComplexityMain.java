@@ -2,18 +2,21 @@ package main;
 
 import graphmodels.hypergraph.IHyperGraph;
 import graphmodels.hypergraph.IVulnNode;
-import utils.Constants;
-import utils.JacksonACUtils;
-import utils.JacksonHAGUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.JacksonACUtils;
+import utils.json.JacksonHAGUtils;
 
 import java.util.Map;
+
+import static utils.constants.FilesConstants.getDataHome;
+import static utils.constants.VulnerabilityConstants.COMPLEXITY_DEFAULT_VALUE;
 
 /**
  * Created by Roberto Gaudenzi on 28/10/17.
  */
 public class VulnComplexityMain {
     public static void main(String[] args){
-        String dataFolderPath = Constants.getDataHome();
+        String dataFolderPath = getDataHome();
         String HAG_JSON_NAME = "HAG_attack_graph.json";
         String AC_JSON_NAME  = "access-complexity-data.json";
 
@@ -27,7 +30,7 @@ public class VulnComplexityMain {
             String acCode = acMap.get(vulnID);
             if(acCode == null){
                 System.err.println("ERROR: " + vulnID + " is not present in Access Complexity knowledge base.");
-                hagVulns.get(vulnID).setComplexityScore(Constants.COMPLEXITY_DEFAULT_VALUE);
+                hagVulns.get(vulnID).setComplexityScore(COMPLEXITY_DEFAULT_VALUE);
             }
             else
                 hagVulns.get(vulnID).setComplexityScore(acCode);

@@ -1,28 +1,32 @@
 package likelihood;
 
+import java.util.Map;
+
 import attackpaths.IAttackPath;
+
 import graphmodels.graph.IEdge;
 import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.IHyperEdge;
 import graphmodels.hypergraph.IHyperGraph;
 import graphmodels.hypergraph.IVulnNode;
-import utils.Constants;
 
-import java.util.Map;
+import static utils.constants.LikelihoodConstants.OBSERVED_EXIT_RATE;
+import static utils.constants.VulnerabilityConstants.getAccessComplexityScore;
+
 
 /**
  * Created by Roberto Gaudenzi on 08/10/17.
  */
-public class ComputeExitRates {
+class ComputeExitRates {
 
     /* NEW VERSION (INCLUDE PRECONDITIONS) */
 
-    public static double[] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix, IAttackPath path, double[] stateVector){
+    static double[] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix, IAttackPath path, double[] stateVector){
         double[] exitRates = new double[indicesMatrix.values().size()];
 
         for(int nodeIndex : indicesMatrix.keySet()){
             if(nodeIndex < stateVector.length && stateVector[nodeIndex] != 0.0)
-                exitRates[nodeIndex] = Constants.OBSERVED_EXIT_RATE;
+                exitRates[nodeIndex] = OBSERVED_EXIT_RATE;
             else{
                 IHostNode node = graph.getNode(indicesMatrix.get(nodeIndex));
                 int nodeRank = getNodeRank(node, path);
@@ -41,7 +45,7 @@ public class ComputeExitRates {
         for(IEdge inEdge : node.getInboundEdges()){
             String vulnID = ((IHyperEdge)inEdge).getVulnNodeID();
             IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
-            double vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
+            double vulnComplexity = getAccessComplexityScore(vulnNode.getComplexityScore());
             if(vulnComplexity > sk){
                 sk = vulnComplexity;
             }
@@ -61,7 +65,7 @@ public class ComputeExitRates {
         for(IEdge inEdge : node.getInboundEdges()){
             String vulnID = ((IHyperEdge)inEdge).getVulnNodeID();
             IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
-            double vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
+            double vulnComplexity = getAccessComplexityScore(vulnNode.getComplexityScore());
             if(vulnComplexity > sk){
                 sk = vulnComplexity;
             }

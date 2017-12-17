@@ -2,19 +2,21 @@ package main;
 
 import attackpaths.BatchPathComputation;
 import graphmodels.hypergraph.IHyperGraph;
-import utils.Constants;
-import utils.JacksonHAGUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.JacksonHAGUtils;
+
+import static utils.constants.FilesConstants.getDataHome;
 
 /**
  * Created by Roberto Gaudenzi on 15/10/17.
  */
 public class BatchPathsMain {
     public static void main(String[] args){
-        String dataFolderPath = Constants.getDataHome();
+        String dataFolderPath = getDataHome();
 
         String attackGraphName = "C-HAG_attack_graph";
 
-        int maxPathLength = Constants.MAX_PATH_LENGTHS[0];
+        int maxPathLength = LikelihoodConstants.MAX_PATH_LENGTHS[0];
 
         String attackGraphFile = attackGraphName + ".json";
         String attackPathsFileRoot = attackGraphName + "_paths_" + maxPathLength;

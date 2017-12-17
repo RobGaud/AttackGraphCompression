@@ -1,4 +1,4 @@
-package utils;
+package utils.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;

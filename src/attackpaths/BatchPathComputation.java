@@ -3,8 +3,8 @@ package attackpaths;
 import graphmodels.graph.IEdge;
 import graphmodels.graph.IGraph;
 import graphmodels.graph.IHostNode;
-import utils.Constants;
-import utils.JacksonPathUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.JacksonPathUtils;
 
 import java.io.File;
 import java.util.Collection;
@@ -62,7 +62,7 @@ public class BatchPathComputation{
             storePath();
 
             // NEW: if we filled up the current batch, store it in a file and flush the collection of paths.
-            if(paths.size() == Constants.MAX_PATHS_PER_FILE){
+            if(paths.size() == LikelihoodConstants.MAX_PATHS_PER_FILE){
                 storeAndReset();
             }
         }

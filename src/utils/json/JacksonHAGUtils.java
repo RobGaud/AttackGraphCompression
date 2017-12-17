@@ -1,4 +1,4 @@
-package utils;
+package utils.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,7 +14,7 @@ import graphmodels.graph.sccmodels.ISCCNode;
 import graphmodels.hypergraph.*;
 import graphmodels.hypergraph.sccmodels.ISCCHyperEdge;
 
-import static utils.Constants.*;
+import static utils.constants.JsonConstants.*;
 
 import java.io.File;
 import java.io.PrintWriter;

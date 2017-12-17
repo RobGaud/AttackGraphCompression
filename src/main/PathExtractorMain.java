@@ -3,24 +3,26 @@ package main;
 import attackpaths.BatchPathExtractor;
 import attackpaths.IAttackPath;
 import graphmodels.hypergraph.IHyperGraph;
-import utils.Constants;
-import utils.JacksonHAGUtils;
-import utils.JacksonPathUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.JacksonHAGUtils;
+import utils.json.JacksonPathUtils;
 
 import java.io.File;
 import java.util.Map;
+
+import static utils.constants.FilesConstants.getDataHome;
 
 /**
  * Created by Roberto Gaudenzi on 09/11/17.
  */
 public class PathExtractorMain {
     public static void main(String[] args){
-        String dataFolderPath = Constants.getDataHome();
+        String dataFolderPath = getDataHome();
 
         String attackGraphName = "C-HAG_attack_graph";
 
-        int maxPathLength = Constants.MAX_PATH_LENGTHS[0];
-        int maxInnerLength = Constants.MAX_INNER_PATH_LENGTHS[0]; // {2, 3, 4}
+        int maxPathLength = LikelihoodConstants.MAX_PATH_LENGTHS[0];
+        int maxInnerLength = LikelihoodConstants.MAX_INNER_PATH_LENGTHS[0]; // {2, 3, 4}
 
         String attackGraphFile = attackGraphName + ".json";
         String attackPathsFileRoot = dataFolderPath + attackGraphName + "_paths_" + maxPathLength + File.separator;

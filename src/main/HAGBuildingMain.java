@@ -2,14 +2,16 @@ package main;
 
 import graphmodels.graph.IHostNode;
 import graphmodels.hypergraph.IHyperGraph;
-import utils.Constants;
-import utils.HAGConversionUtils;
-import utils.JacksonHAGUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.HAGConversionUtils;
+import utils.json.JacksonHAGUtils;
+
+import static utils.constants.FilesConstants.getDataHome;
 
 public class HAGBuildingMain {
 
     public static void main(String[] args){
-        String dataFolderPath = Constants.getDataHome();
+        String dataFolderPath = getDataHome();
         String GRAPH_JSON_NAME = "attack_graph.json";
 
         String hag_filename = HAGConversionUtils.convertJson(dataFolderPath, GRAPH_JSON_NAME);

@@ -1,4 +1,4 @@
-package utils;
+package utils.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -7,20 +7,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import static utils.constants.FilesConstants.*;
+import static utils.constants.VulnerabilityConstants.CVSS_DEFAULT_VALUE;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-
-import static utils.Constants.*;
 
 /**
  * Created by Roberto Gaudenzi on 30/09/17.
  */
 public class JacksonCVSSUtils {
 
-    public static Map<String, String> loadCVSSMap(String filename){
-        String cveDataFolder = Constants.getCveDataHome();
+    static Map<String, String> loadCVSSMap(String filename){
+        String cveDataFolder = getCveDataHome();
         Map<String, String> cveMap = new HashMap<>();
         try{
             JsonFactory jsonFactory = new JsonFactory();
@@ -95,7 +96,7 @@ public class JacksonCVSSUtils {
         String[] filenames = {"nvdcve-1.0-2002.json", "nvdcve-1.0-2003.json", "nvdcve-1.0-2004.json", "nvdcve-1.0-2005.json",
                               "nvdcve-1.0-2006.json", "nvdcve-1.0-2007.json", "nvdcve-1.0-2008.json", "nvdcve-1.0-2009.json"};
 
-        String cveDataFolderPath = Constants.getIdeaHome() + PROJECT_HOME + DATA_HOME + CVE_DATA_HOME;
+        String cveDataFolderPath = getIdeaHome() + PROJECT_HOME + DATA_HOME + CVE_DATA_HOME;
         String cveDataFilename = "cvss-data.json";
 
         ObjectMapper mapper = new ObjectMapper();

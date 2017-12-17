@@ -8,18 +8,18 @@ import graphmodels.hypergraph.IHyperGraph;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 
-import utils.Constants;
+import utils.constants.LikelihoodConstants;
 
 import java.util.*;
 
 /**
  * Created by Roberto Gaudenzi on 15/10/17.
  */
-public class ComputePathsMTAO {
+class ComputePathsMTAO {
 
     private static Map<Integer, String> nodesIndices;
 
-    public static Map<String, Double> execute(IHyperGraph graph, Collection<IAttackPath> paths, IHostNode targetNode, boolean fullPath){
+    static Map<String, Double> execute(IHyperGraph graph, Collection<IAttackPath> paths, IHostNode targetNode, boolean fullPath){
 
         Map<String, Double> mtaoMap = new HashMap<>();
 
@@ -30,7 +30,7 @@ public class ComputePathsMTAO {
         for(IAttackPath path : paths){
             Set<IHostNode> pathSubgraph = getPathSubgraph(graph, path);
             assignIndices(targetNode, pathSubgraph);
-            double[][] P = ComputeTransitionProb.execute(graph, nodesIndices, Constants.EPSILON);
+            double[][] P = ComputeTransitionProb.execute(graph, nodesIndices, LikelihoodConstants.EPSILON);
             double[] S = ComputeStateVector.execute(path, nodesIndices, fullPath);
 
             double[] exitRates = ComputeExitRates.execute(graph, nodesIndices, path, S);

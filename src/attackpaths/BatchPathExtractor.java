@@ -1,8 +1,8 @@
 package attackpaths;
 
 import graphmodels.graph.IGraph;
-import utils.Constants;
-import utils.JacksonPathUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.JacksonPathUtils;
 
 import java.io.File;
 import java.util.*;
@@ -43,7 +43,7 @@ public class BatchPathExtractor {
             for(IAttackPath ePath : resultList){
                 extractedPaths.add(ePath);
 
-                if(extractedPaths.size() == Constants.MAX_PATHS_PER_FILE) {
+                if(extractedPaths.size() == LikelihoodConstants.MAX_PATHS_PER_FILE) {
                     System.out.println("BatchPathExtractor.extractAndStore: storing batch number " + currentBatchID);
                     storeAndReset();
                 }

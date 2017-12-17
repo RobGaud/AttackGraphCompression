@@ -1,4 +1,4 @@
-package utils;
+package utils.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +19,7 @@ import graphmodels.hypergraph.VulnerabilityNode;
 import java.util.Collection;
 import java.util.Map;
 
-import static utils.Constants.HOST_NODE_TYPE;
-import static utils.Constants.SCC_NODE_TYPE;
+import static utils.constants.JsonConstants.*;
 
 /**
  * Created by Roberto Gaudenzi on 07/10/17.
@@ -43,7 +42,7 @@ class JacksonNodeUtils {
         return new VulnerabilityNode(vID, vData, cvssScore, complexityScore);
     }
 
-    public static ISCCNode loadSCCNode(JsonNode sccJson){
+    static ISCCNode loadSCCNode(JsonNode sccJson){
         String sccNodeID = sccJson.get("node_Ident").asText();
         String sccNodeData = sccJson.get("node_Data").asText();
 
@@ -64,7 +63,7 @@ class JacksonNodeUtils {
                 String edgeType = eJson.get("edge_Type").asText();
 
                 IEdge edge;
-                if(edgeType.contains(Constants.ATTACK_EDGE_TYPE)){
+                if(edgeType.contains(ATTACK_EDGE_TYPE)){
                     //Treat it as attack edge
                     edge = JacksonEdgeUtils.loadAttackEdge(eJson);
                 }

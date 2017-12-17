@@ -13,7 +13,8 @@ import sccfinder.ISCCFinder;
 
 import java.util.*;
 
-import static utils.Constants.*;
+import static utils.constants.CompressionConstants.SCC_EDGE_ID_PREFIX;
+import static utils.constants.CompressionConstants.SCC_NODE_ID_PREFIX;
 
 /**
  * Created by Roberto Gaudenzi on 16/09/17.

@@ -1,4 +1,4 @@
-package utils;
+package utils.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -12,7 +12,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static utils.Constants.*;
+import static utils.constants.FilesConstants.*;
+import static utils.constants.VulnerabilityConstants.COMPLEXITY_DEFAULT_VALUE;
 
 /**
  * Created by Roberto Gaudenzi on 08/10/17.
@@ -66,7 +67,7 @@ public class JacksonACUtils {
     }
 
     public static Map<String, String> loadCVEJson(String filename){
-        String cveDataFolder = Constants.getCveDataHome();
+        String cveDataFolder = getCveDataHome();
         Map<String, String> cveMap = new HashMap<>();
         try{
             JsonFactory jsonFactory = new JsonFactory();
@@ -93,7 +94,7 @@ public class JacksonACUtils {
         String[] filenames = {"nvdcve-1.0-2002.json", "nvdcve-1.0-2003.json", "nvdcve-1.0-2004.json", "nvdcve-1.0-2005.json",
                               "nvdcve-1.0-2006.json", "nvdcve-1.0-2007.json", "nvdcve-1.0-2008.json", "nvdcve-1.0-2009.json"};
 
-        String cveDataFolderPath = Constants.getIdeaHome() + PROJECT_HOME + DATA_HOME + CVE_DATA_HOME;
+        String cveDataFolderPath = getIdeaHome() + PROJECT_HOME + DATA_HOME + CVE_DATA_HOME;
         String cveDataFilename = "access-complexity-data.json";
 
         ObjectMapper mapper = new ObjectMapper();

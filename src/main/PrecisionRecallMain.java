@@ -4,33 +4,35 @@ import attackpaths.AttackPathExtractor;
 import attackpaths.IAttackPath;
 import graphmodels.hypergraph.IHyperGraph;
 import test.PrecisionRecall;
-import utils.Constants;
-import utils.JacksonHAGUtils;
-import utils.JacksonPathUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.JacksonHAGUtils;
+import utils.json.JacksonPathUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
+
+import static utils.constants.FilesConstants.getDataHome;
 
 /**
  * Created by Roberto Gaudenzi on 09/11/17.
  */
 public class PrecisionRecallMain {
     public static void main(String[] args){
-        String dataFolderPath = Constants.getDataHome();
+        String dataFolderPath = getDataHome();
 
         String attackGraphName = "HAG_attack_graph";
         String compressedGraphName = "C-"+attackGraphName;
 
-        int compressedPathsLength = Constants.MAX_PATH_LENGTHS[0];
-        int normalPathsLength = Constants.MAX_PATH_LENGTHS[3];
+        int compressedPathsLength = LikelihoodConstants.MAX_PATH_LENGTHS[0];
+        int normalPathsLength = LikelihoodConstants.MAX_PATH_LENGTHS[3];
 
         String compressedGraphFilename = compressedGraphName+".json";
         String attackPathsFilenamePrefix = attackGraphName + "_paths_" + normalPathsLength + "_";
         String compressedPathsFilename = compressedGraphName + "_paths_" + compressedPathsLength + "_0.json";
 
-        double minCompressedSL = Constants.MIN_COMPRESSED_SL[0];
-        double minNormalSL = Constants.MIN_PATHS_SL[0];
+        double minCompressedSL = LikelihoodConstants.MIN_COMPRESSED_SL[0];
+        double minNormalSL = LikelihoodConstants.MIN_PATHS_SL[0];
 
         System.out.println("PrecisionRecallMain: loading compressed graph.");
         IHyperGraph compressedGraph = JacksonHAGUtils.loadHAG(dataFolderPath, compressedGraphFilename);
@@ -44,7 +46,7 @@ public class PrecisionRecallMain {
             IAttackPath cPath = compressedPathsMap.get(pathID);
             double pathSL = cPath.getLikelihood();
             if(pathSL >= minCompressedSL && pathSL < 1.0){
-                Collection<IAttackPath> extractedPaths = AttackPathExtractor.extractPaths(compressedGraph, cPath, Constants.MAX_INNER_PATH_LENGTHS[0]);
+                Collection<IAttackPath> extractedPaths = AttackPathExtractor.extractPaths(compressedGraph, cPath, LikelihoodConstants.MAX_INNER_PATH_LENGTHS[0]);
                 for(IAttackPath ePath : extractedPaths){
                     if(ePath.getLikelihood() > minNormalSL && ePath.getLikelihood() < 1.0)
                         relevantExtractedPaths.add(ePath);

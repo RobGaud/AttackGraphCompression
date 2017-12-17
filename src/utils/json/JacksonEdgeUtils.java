@@ -1,4 +1,4 @@
-package utils;
+package utils.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +14,8 @@ import graphmodels.hypergraph.HyperEdge;
 import graphmodels.hypergraph.IHyperEdge;
 import graphmodels.hypergraph.sccmodels.ISCCHyperEdge;
 import graphmodels.hypergraph.sccmodels.SCCHyperEdge;
+
+import static utils.constants.JsonConstants.*;
 
 /**
  * Created by Roberto Gaudenzi on 07/10/17.
@@ -75,7 +77,7 @@ class JacksonEdgeUtils {
     /** METHODS FOR STORING EDGES **/
     static ObjectNode storeAttackEdge(ObjectMapper mapper, IAttackEdge attackEdge){
         ObjectNode edgeJson = mapper.createObjectNode();
-        edgeJson.put("edge_Type", Constants.ATTACK_EDGE_TYPE);
+        edgeJson.put("edge_Type", ATTACK_EDGE_TYPE);
         edgeJson.put("edge_Ident", attackEdge.getID());
         edgeJson.put("edge_Data", attackEdge.getData());
         edgeJson.put("tail", attackEdge.getTailID());
@@ -92,7 +94,7 @@ class JacksonEdgeUtils {
 
     static ObjectNode storeHyperEdge(ObjectMapper mapper, IHyperEdge hyperEdge){
         ObjectNode edgeJson = mapper.createObjectNode();
-        edgeJson.put("edge_Type", Constants.HYPER_EDGE_TYPE);
+        edgeJson.put("edge_Type", HYPER_EDGE_TYPE);
         edgeJson.put("edge_Ident", hyperEdge.getID());
         edgeJson.put("edge_Data", hyperEdge.getData());
         edgeJson.put("tail", hyperEdge.getTailID());
@@ -104,7 +106,7 @@ class JacksonEdgeUtils {
 
     static ObjectNode storeSCCAttackEdge(ObjectMapper mapper, ISCCAttackEdge sccaeEdge){
         ObjectNode edgeJson = mapper.createObjectNode();
-        edgeJson.put("edge_Type", Constants.SCC_ATTACK_EDGE_TYPE);
+        edgeJson.put("edge_Type", SCC_ATTACK_EDGE_TYPE);
         edgeJson.put("edge_Ident", sccaeEdge.getID());
         edgeJson.put("edge_Data", sccaeEdge.getData());
         edgeJson.put("tail", sccaeEdge.getTailID());
@@ -123,7 +125,7 @@ class JacksonEdgeUtils {
 
     static ObjectNode storeSCCHyperEdge(ObjectMapper mapper, ISCCHyperEdge sccheEdge){
         ObjectNode edgeJson = mapper.createObjectNode();
-        edgeJson.put("edge_Type", Constants.SCC_HYPER_EDGE_TYPE);
+        edgeJson.put("edge_Type", SCC_HYPER_EDGE_TYPE);
         edgeJson.put("edge_Ident", sccheEdge.getID());
         edgeJson.put("edge_Data", sccheEdge.getData());
         edgeJson.put("tail", sccheEdge.getTailID());

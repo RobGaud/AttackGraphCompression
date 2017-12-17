@@ -2,16 +2,15 @@ package attackpaths;
 
 import graphmodels.graph.IEdge;
 import graphmodels.graph.sccmodels.ISCCNode;
-import utils.Constants;
 
 import java.util.*;
 
 /**
  * Created by Roberto Gaudenzi on 22/10/17.
  */
-public class InnerPathComputation {
+class InnerPathComputation {
 
-    public static Set<LinkedList<IEdge>> execute(ISCCNode sccNode, String from, String to, int maxInnerPathLength){
+    static Set<LinkedList<IEdge>> execute(ISCCNode sccNode, String from, String to, int maxInnerPathLength){
         Set<String> currentPathNodes = new HashSet<>();
         currentPathNodes.add(from);
         return computeInnerPaths(sccNode, from, to, maxInnerPathLength, currentPathNodes);

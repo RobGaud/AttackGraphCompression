@@ -3,11 +3,13 @@ package main;
 import attackpaths.IAttackPath;
 import graphmodels.hypergraph.IHyperGraph;
 import likelihood.ComputeSL;
-import utils.Constants;
-import utils.JacksonHAGUtils;
-import utils.JacksonPathUtils;
+import utils.constants.LikelihoodConstants;
+import utils.json.JacksonHAGUtils;
+import utils.json.JacksonPathUtils;
 
 import java.util.*;
+
+import static utils.constants.FilesConstants.getDataHome;
 
 /**
  * Created by Roberto Gaudenzi on 15/10/17.
@@ -17,8 +19,8 @@ public class LikelihoodMain {
     private static Map<String, IAttackPath> pathsMap;
 
     public static void main(String[] args){
-        int pathLength = Constants.MAX_PATH_LENGTHS[1];
-        String dataFolderPath = Constants.getDataHome();
+        int pathLength = LikelihoodConstants.MAX_PATH_LENGTHS[1];
+        String dataFolderPath = getDataHome();
         String attackGraphName = "HAG_attack_graph";
         String pathsFolderPath = dataFolderPath + attackGraphName + "_paths_" + pathLength + "/";
 

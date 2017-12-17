@@ -9,14 +9,14 @@ import graphmodels.hypergraph.IVulnNode;
 import java.util.Collection;
 import java.util.Map;
 
-import static utils.Constants.getAccessComplexityScore;
+import static utils.constants.VulnerabilityConstants.getAccessComplexityScore;
 
 /**
  * Created by Roberto Gaudenzi on 08/10/17.
  */
-public class ComputeTransitionProb {
+class ComputeTransitionProb {
 
-    public static double[][] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix, float epsilon){
+    static double[][] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix, float epsilon){
 
         int n = indicesMatrix.values().size();
 

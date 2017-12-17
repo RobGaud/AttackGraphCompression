@@ -1,4 +1,4 @@
-package utils;
+package utils.json;
 
 import attackpaths.AttackPath;
 import attackpaths.IAttackPath;
@@ -16,11 +16,11 @@ import graphmodels.graph.sccmodels.ISCCAttackEdge;
 import graphmodels.hypergraph.IHyperEdge;
 import graphmodels.hypergraph.sccmodels.ISCCHyperEdge;
 
+import static utils.constants.JsonConstants.*;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.*;
-
-import static utils.Constants.*;
 
 /**
  * Created by Roberto Gaudenzi on 23/09/17.
