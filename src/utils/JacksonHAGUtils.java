@@ -32,7 +32,7 @@ public class JacksonHAGUtils {
      * @param filename: the file that contains the graph
      * @return the graph parsed from the json file.
      */
-    public static IHyperGraph loadCompressedHAG(String dataFolderPath, String filename){
+    public static IHyperGraph loadHAG(String dataFolderPath, String filename){
         HyperGraph hyperGraph = null;
         try{
             JsonFactory jsonFactory = new JsonFactory();
@@ -127,7 +127,7 @@ public class JacksonHAGUtils {
      * @param filename: the name of the Json file that will contain the HyperGraph object.
      * @param dataFolderPath: the path of the folder that will contain the file.
      */
-    public static void storeCompressedHAG(IHyperGraph graph, String dataFolderPath, String filename){
+    public static void storeHAG(IHyperGraph graph, String dataFolderPath, String filename){
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode graphJson = mapper.createObjectNode();

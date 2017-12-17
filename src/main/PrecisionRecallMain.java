@@ -33,7 +33,7 @@ public class PrecisionRecallMain {
         double minNormalSL = Constants.MIN_PATHS_SL[0];
 
         System.out.println("PrecisionRecallMain: loading compressed graph.");
-        IHyperGraph compressedGraph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, compressedGraphFilename);
+        IHyperGraph compressedGraph = JacksonHAGUtils.loadHAG(dataFolderPath, compressedGraphFilename);
 
         System.out.println("PrecisionRecallMain: loading paths to be extracted.");
         Map<String, IAttackPath> compressedPathsMap = JacksonPathUtils.loadPaths(dataFolderPath, compressedPathsFilename);

@@ -20,7 +20,7 @@ public class BatchPathsMain {
         String attackPathsFileRoot = attackGraphName + "_paths_" + maxPathLength;
 
         //Load hypergraph
-        IHyperGraph graph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, attackGraphFile);
+        IHyperGraph graph = JacksonHAGUtils.loadHAG(dataFolderPath, attackGraphFile);
 
         BatchPathComputation pathComputer = new BatchPathComputation(graph, maxPathLength, dataFolderPath, attackPathsFileRoot);
         pathComputer.computeAndStorePaths();

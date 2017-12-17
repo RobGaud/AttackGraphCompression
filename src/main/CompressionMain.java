@@ -22,7 +22,7 @@ public class CompressionMain {
         String attackGraphFilename = "HAG_attack_graph.json";
         String filename = "C-HAG_attack_graph.json";
 
-        IGraph hyperGraph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, attackGraphFilename);
+        IGraph hyperGraph = JacksonHAGUtils.loadHAG(dataFolderPath, attackGraphFilename);
         System.out.println("This graph contains " + hyperGraph.getHostNodes().keySet().size() + " nodes.");
 
         ISCCFinder sccFinder = new KosarajuSCCFinder(hyperGraph);
@@ -39,7 +39,7 @@ public class CompressionMain {
 
         if(IHyperGraph.isInstance(newGraph)){
             IHyperGraph newHyperGraph = (IHyperGraph)newGraph;
-            JacksonHAGUtils.storeCompressedHAG(newHyperGraph, dataFolderPath, filename);
+            JacksonHAGUtils.storeHAG(newHyperGraph, dataFolderPath, filename);
         }
     }
 }

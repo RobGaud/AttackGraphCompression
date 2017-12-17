@@ -17,7 +17,7 @@ public class VulnComplexityMain {
         String HAG_JSON_NAME = "HAG_attack_graph.json";
         String AC_JSON_NAME  = "access-complexity-data.json";
 
-        IHyperGraph hyperGraph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, HAG_JSON_NAME);
+        IHyperGraph hyperGraph = JacksonHAGUtils.loadHAG(dataFolderPath, HAG_JSON_NAME);
 
         Map<String, String> acMap = JacksonACUtils.loadCVEJson(AC_JSON_NAME);
 
@@ -36,6 +36,6 @@ public class VulnComplexityMain {
         }
 
         // Store again the graph
-        JacksonHAGUtils.storeCompressedHAG(hyperGraph, dataFolderPath, HAG_JSON_NAME);
+        JacksonHAGUtils.storeHAG(hyperGraph, dataFolderPath, HAG_JSON_NAME);
     }
 }

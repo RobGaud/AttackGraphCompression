@@ -26,7 +26,7 @@ public class LikelihoodMain {
         String attackPathsFile = attackGraphName + "_paths_" + pathLength + "_0.json";
 
         //Load hypergraph
-        IHyperGraph graph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, attackGraphFile);
+        IHyperGraph graph = JacksonHAGUtils.loadHAG(dataFolderPath, attackGraphFile);
 
         //Load the related pathsMap
         System.out.println("Calling loadPaths().");

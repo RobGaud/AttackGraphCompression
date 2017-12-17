@@ -26,7 +26,7 @@ public class PathExtractorMain {
         String attackPathsFileRoot = dataFolderPath + attackGraphName + "_paths_" + maxPathLength + File.separator;
 
         //Load hypergraph
-        IHyperGraph graph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, attackGraphFile);
+        IHyperGraph graph = JacksonHAGUtils.loadHAG(dataFolderPath, attackGraphFile);
 
         File folder = new File(attackPathsFileRoot);
         File[] listOfFiles = folder.listFiles();

@@ -14,8 +14,8 @@ public class HAGBuildingMain {
 
         String hag_filename = HAGConversionUtils.convertJson(dataFolderPath, GRAPH_JSON_NAME);
 
-        IHyperGraph hyperGraph = JacksonHAGUtils.loadCompressedHAG(dataFolderPath, hag_filename);
-        JacksonHAGUtils.storeCompressedHAG(hyperGraph, dataFolderPath, hag_filename);
+        IHyperGraph hyperGraph = JacksonHAGUtils.loadHAG(dataFolderPath, hag_filename);
+        JacksonHAGUtils.storeHAG(hyperGraph, dataFolderPath, hag_filename);
     }
 
     private static void printHAG(IHyperGraph hyperGraph){
