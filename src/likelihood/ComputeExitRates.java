@@ -15,43 +15,16 @@ import java.util.Map;
  */
 public class ComputeExitRates {
 
-    public static double[] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix){
-        double[] exitRates = new double[indicesMatrix.values().size()];
-
-        for(int nodeIndex : indicesMatrix.keySet()){
-            IHostNode node = graph.getNode(indicesMatrix.get(nodeIndex));
-
-            exitRates[nodeIndex] = getExitRate(graph, node);
-        }
-
-        return exitRates;
-    }
-
-    private static double getExitRate(IHyperGraph graph, IHostNode node){
-        double sk = 1.0;
-        // for(IEdge inEdge : node.getInboundEdges()){
-        for(IEdge outEdge : node.getOutboundEdges()){
-            String vulnID = ((IHyperEdge)outEdge).getVulnNodeID();
-            IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
-            float vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
-            if(vulnComplexity < sk){
-                sk = vulnComplexity;
-            }
-        }
-        return sk/2;
-    }
-
     /* NEW VERSION (INCLUDE PRECONDITIONS) */
 
     public static double[] execute(IHyperGraph graph, Map<Integer, String> indicesMatrix, IAttackPath path, double[] stateVector){
         double[] exitRates = new double[indicesMatrix.values().size()];
 
         for(int nodeIndex : indicesMatrix.keySet()){
-            IHostNode node = graph.getNode(indicesMatrix.get(nodeIndex));
-
             if(nodeIndex < stateVector.length && stateVector[nodeIndex] != 0.0)
                 exitRates[nodeIndex] = Constants.OBSERVED_EXIT_RATE;
             else{
+                IHostNode node = graph.getNode(indicesMatrix.get(nodeIndex));
                 int nodeRank = getNodeRank(node, path);
                 if(nodeRank != 0)
                     exitRates[nodeIndex] = getExitRate(graph, node, nodeRank);
@@ -64,12 +37,12 @@ public class ComputeExitRates {
     }
 
     private static double getExitRate(IHyperGraph graph, IHostNode node, int nodeRank){
-        double sk = 1.0;
+        double sk = 0.0;
         for(IEdge inEdge : node.getInboundEdges()){
             String vulnID = ((IHyperEdge)inEdge).getVulnNodeID();
             IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
-            float vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
-            if(vulnComplexity < sk){
+            double vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
+            if(vulnComplexity > sk){
                 sk = vulnComplexity;
             }
         }
@@ -83,6 +56,20 @@ public class ComputeExitRates {
         return (sk + predRatio)/2;
     }
 
+    private static double getExitRate(IHyperGraph graph, IHostNode node){
+        double sk = 0.0;
+        for(IEdge inEdge : node.getInboundEdges()){
+            String vulnID = ((IHyperEdge)inEdge).getVulnNodeID();
+            IVulnNode vulnNode = graph.getVulnNodes().get(vulnID);
+            double vulnComplexity = Constants.getAccessComplexityScore(vulnNode.getComplexityScore());
+            if(vulnComplexity > sk){
+                sk = vulnComplexity;
+            }
+        }
+        return sk/2;
+    }
+
+
     private static int getNodeRank(IHostNode node, IAttackPath path){
         for(int i = 0; i < path.getLength(); i++){
             String nodeID = node.getID();
@@ -91,7 +78,6 @@ public class ComputeExitRates {
                 return i+1;
         }
 
-        //System.err.println("ComputeExitRates.getNodeRank: node with ID " + node.getID() + " not in path with ID " + path.getID());
         return 0;
     }
 }

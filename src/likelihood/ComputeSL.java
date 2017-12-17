@@ -11,44 +11,41 @@ import java.util.*;
  */
 public class ComputeSL {
 
-    public static Map<String, Double> execute(IHyperGraph graph, Set<IHostNode> subgraph, Collection<IAttackPath> paths, IHostNode targetNode){
+    public static Map<String, Double> execute(IHyperGraph graph, Collection<IAttackPath> paths, IHostNode targetNode){
 
-        Map<String, Double> mtaoMap = ComputePathsMTAO.execute(graph, subgraph, paths, targetNode);
-
-        double mtaoMin = getMTAOMin(mtaoMap.values());
+        Map<String, Double> mtaoMap = ComputePathsMTAO.execute(graph, paths, targetNode, false);
+        Map<String, Double> mtaoMinMap = ComputePathsMTAO.execute(graph, paths, targetNode, true);
 
         Map<String, Double> slMap = new HashMap<>();
 
-        int infCount = 0;
         for(String pathID : mtaoMap.keySet()){
             double pathMTAO = mtaoMap.get(pathID);
+            double mtaoMin = mtaoMinMap.get(pathID);
             double sl = computeSL(pathMTAO, mtaoMin);
-            if(Double.isInfinite(sl))
-                infCount++;
             slMap.put(pathID, sl);
         }
 
-        System.out.println("InfCount = " + infCount);
+        /* TODO remove */
+        double minSL = 1.0;
+        double maxSL = 0.0;
+        int tooHigh = 0;
+        for(String pathID : slMap.keySet()){
+            double pathSL = slMap.get(pathID);
+            if(pathSL > maxSL && pathSL < 1.0)
+                maxSL = pathSL;
+            if(pathSL < minSL)
+                minSL = pathSL;
+            if(pathSL > 1.0)
+                tooHigh++;
+        }
+        System.out.println("ComputeSL: minSL = " + minSL + ", maxSL = " + maxSL);
+        System.out.println("ComputeSL: tooHigh = " + tooHigh);
+
 
         return slMap;
     }
 
     private static double computeSL(double pathMTAO, double mtaoMin){
-        double sl = -20 * Math.log10((pathMTAO - mtaoMin)/pathMTAO);
-        return sl;
-    }
-
-    private static double getMTAOMin(Collection<Double> mtaoValues){
-        Iterator<Double> it = mtaoValues.iterator();
-
-        double min = it.next();
-        while(it.hasNext()){
-            double mtao = it.next();
-            if(mtao < min)
-                min = mtao;
-        }
-
-        System.out.println("ComputeSL: minMtao = " + min);
-        return min;
+        return -20 * Math.log((pathMTAO - mtaoMin)/pathMTAO);
     }
 }
